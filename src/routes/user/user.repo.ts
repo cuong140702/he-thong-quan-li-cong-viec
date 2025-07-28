@@ -4,6 +4,7 @@ import {
   GetUsersQueryType,
   GetUsersResType,
   RefreshTokenBodyType,
+  UpdateUserBodyType,
 } from 'src/routes/user/user.model'
 import { RoleType } from 'src/shared/models/shared-role.model'
 import { UserType } from 'src/shared/models/shared-user.model'
@@ -41,6 +42,7 @@ export class UserRepo {
     return this.prismaService.user.findFirst({
       where: {
         ...where,
+        deletedAt: null,
       },
       include: {
         role: true,
@@ -75,11 +77,45 @@ export class UserRepo {
     })
   }
 
-  createUser({ data }: { data: CreateUserBodyType }) {
+  createUser({ data }: { data: CreateUserBodyType }): Promise<UserType> {
     return this.prismaService.user.create({
       data: {
         ...data,
       },
     })
+  }
+
+  updateUser(where: { id: string }, data: Partial<UserType>): Promise<UserType | null> {
+    return this.prismaService.user.update({
+      where: {
+        ...where,
+      },
+      data,
+    })
+  }
+
+  deleteUser(
+    {
+      id,
+    }: {
+      id: string
+    },
+    isHard?: boolean,
+  ): Promise<UserType> {
+    return isHard
+      ? this.prismaService.user.delete({
+          where: {
+            id,
+          },
+        })
+      : this.prismaService.user.update({
+          where: {
+            id,
+            deletedAt: null,
+          },
+          data: {
+            deletedAt: new Date(),
+          },
+        })
   }
 }

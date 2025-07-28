@@ -1,6 +1,12 @@
 import { HttpException, Injectable } from '@nestjs/common'
 import { UserRepo } from 'src/routes/user/user.repo'
-import { CreateUserBodyType, GetUsersQueryType, LoginBodyType, RefreshTokenBodyType } from 'src/routes/user/user.model'
+import {
+  CreateUserBodyType,
+  GetUsersQueryType,
+  LoginBodyType,
+  RefreshTokenBodyType,
+  UpdateUserBodyType,
+} from 'src/routes/user/user.model'
 import { HashingService } from 'src/shared/services/hashing.service'
 import { TokenService } from 'src/shared/services/token.service'
 import { AccessTokenPayloadCreate } from 'src/shared/types/jwt.type'
@@ -38,7 +44,18 @@ export class UserService {
       fullName: user.fullName,
       roleId: user.roleId,
     })
-    return tokens
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        roleId: user.roleId,
+        role: user.role?.name,
+      },
+    }
   }
 
   async generateTokens({ userId, email, fullName, roleId }: AccessTokenPayloadCreate) {
@@ -97,7 +114,9 @@ export class UserService {
       throw new Error('Email đã được sử dụng.')
     }
 
+    // Hash the password
     const hashedPassword = await this.hashingService.hash(data.password)
+
     const user = await this.userRepo.createUser({
       data: {
         ...data,
@@ -105,5 +124,43 @@ export class UserService {
       },
     })
     return user
+  }
+
+  async updateUser({ data, id }: { data: UpdateUserBodyType; id: string }) {
+    const user = await this.userRepo.findUniqueUserIncludeRole({
+      id,
+    })
+    if (!user) {
+      throw new Error('Không tìm thấy người dùng với ID đã cung cấp.')
+    }
+
+    if (data.email && data.email !== user.email) {
+      const existingUser = await this.userRepo.findUniqueUserIncludeRole({
+        email: data.email,
+      })
+      if (existingUser) {
+        throw new Error('Email đã được sử dụng.')
+      }
+    }
+
+    return await this.userRepo.updateUser(
+      { id },
+      {
+        ...data,
+      },
+    )
+  }
+
+  async deleteUser({ id }: { id: string }) {
+    try {
+      await this.userRepo.deleteUser({
+        id,
+      })
+      return {
+        message: 'Delete successfully',
+      }
+    } catch (error) {
+      throw error
+    }
   }
 }

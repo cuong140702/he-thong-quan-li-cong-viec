@@ -26,26 +26,26 @@ export const GetUsersQuerySchema = z
 
 export const GetUserParamsSchema = z
   .object({
-    userId: z.coerce.number().int().positive(),
+    userId: z.string().uuid(),
   })
   .strict()
 
 export const CreateUserBodySchema = UserSchema.pick({
   email: true,
-  name: true,
-  phoneNumber: true,
-  avatar: true,
-  status: true,
   password: true,
   roleId: true,
   fullName: true,
 }).strict()
 
-export const CreateUserResSchema = UserSchema.omit({
+export const UpdateProfileResSchema = UserSchema.omit({
   password: true,
 })
 
-export const UpdateUserBodySchema = CreateUserBodySchema
+export const UpdateUserBodySchema = UserSchema.pick({
+  fullName: true,
+  email: true,
+  roleId: true,
+}).strict()
 
 export const LoginBodySchema = UserSchema.pick({
   email: true,

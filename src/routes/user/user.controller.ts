@@ -1,18 +1,22 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger'
 import { ZodSerializerDto } from 'nestjs-zod'
 import {
   CreateUserBodyDTO,
   CreateUserResDTO,
+  GetUserParamsDTO,
   GetUsersQueryDTO,
   GetUsersResDTO,
   LoginBodyDTO,
   LoginResDTO,
   RefreshTokenBodyDTO,
   RefreshTokenResDTO,
+  UpdateProfileResDTO,
+  UpdateUserBodyDTO,
 } from 'src/routes/user/user.dto'
 import { UserService } from 'src/routes/user/user.service'
-import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
 import { IsPublic } from 'src/shared/decorators/auth.decorator'
+import { MessageResDTO } from 'src/shared/dtos/response.dto'
 
 @Controller('users')
 export class UserController {
@@ -39,7 +43,7 @@ export class UserController {
   @ZodSerializerDto(RefreshTokenResDTO)
   refreshToken(@Body() body: RefreshTokenBodyDTO) {
     return this.userService.refreshToken({
-      token: body.refreshToken,
+      token: body.token,
     })
   }
 
@@ -47,5 +51,30 @@ export class UserController {
   @ZodSerializerDto(CreateUserResDTO)
   create(@Body() body: CreateUserBodyDTO) {
     return this.userService.createUser({ data: body })
+  }
+
+  @Put(':userId')
+  @ApiOperation({ summary: 'Cập nhật thông tin người dùng' })
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'ID của người dùng cần cập nhật',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({ status: 200, description: 'Cập nhật thành công' })
+  @ZodSerializerDto(UpdateProfileResDTO)
+  updateUser(@Body() body: UpdateUserBodyDTO, @Param() params: GetUserParamsDTO) {
+    return this.userService.updateUser({
+      data: body,
+      id: String(params.userId),
+    })
+  }
+
+  @Delete(':userId')
+  @ZodSerializerDto(MessageResDTO)
+  delete(@Param() params: GetUserParamsDTO) {
+    return this.userService.deleteUser({
+      id: params.userId,
+    })
   }
 }

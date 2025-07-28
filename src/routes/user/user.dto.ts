@@ -1,7 +1,6 @@
 import { createZodDto } from 'nestjs-zod'
 import {
   CreateUserBodySchema,
-  CreateUserResSchema,
   GetUserParamsSchema,
   GetUsersQuerySchema,
   GetUsersResSchema,
@@ -9,6 +8,7 @@ import {
   LoginResSchema,
   RefreshTokenBodySchema,
   RefreshTokenResSchema,
+  UpdateProfileResSchema,
   UpdateUserBodySchema,
 } from 'src/routes/user/user.model'
 
@@ -30,4 +30,6 @@ export class RefreshTokenResDTO extends createZodDto(RefreshTokenResSchema) {}
 
 export class RefreshTokenBodyDTO extends createZodDto(RefreshTokenBodySchema) {}
 
-export class CreateUserResDTO extends createZodDto(CreateUserResSchema) {}
+export class CreateUserResDTO extends createZodDto(UpdateProfileResSchema) {}
+
+export class UpdateProfileResDTO extends createZodDto(UpdateProfileResSchema) {}

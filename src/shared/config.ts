@@ -1,15 +1,15 @@
-import z from 'zod';
-import fs from 'fs';
-import path from 'path';
-import { config } from 'dotenv';
+import z from 'zod'
+import fs from 'fs'
+import path from 'path'
+import { config } from 'dotenv'
 
 config({
   path: '.env',
-});
-// Ki?m tra coi th? có file .env hay ch?a
+})
+// Kiá»ƒm tra coi cÃ³ file .env hay chÆ°a
 if (!fs.existsSync(path.resolve('.env'))) {
-  console.log('Không tìm th?y file .env');
-  process.exit(1);
+  console.log('KhÃ´ng tÃ¬m tháº¥y file .env')
+  process.exit(1)
 }
 
 const configSchema = z.object({
@@ -18,16 +18,19 @@ const configSchema = z.object({
   ACCESS_TOKEN_EXPIRES_IN: z.string(),
   REFRESH_TOKEN_SECRET: z.string(),
   REFRESH_TOKEN_EXPIRES_IN: z.string(),
-});
+  ADMIN_EMAIL: z.string(),
+  ADMIN_PASSWORD: z.string(),
+  ADMIN_NAME: z.string(),
+})
 
-const configServer = configSchema.safeParse(process.env);
+const configServer = configSchema.safeParse(process.env)
 
 if (!configServer.success) {
-  console.log('Các giá tr? khai báo trong file .env không h?p l?');
-  console.error(configServer.error);
-  process.exit(1);
+  console.log('Cï¿½c giï¿½ tr? khai bï¿½o trong file .env khï¿½ng h?p l?')
+  console.error(configServer.error)
+  process.exit(1)
 }
 
-const envConfig = configServer.data;
+const envConfig = configServer.data
 
-export default envConfig;
+export default envConfig
