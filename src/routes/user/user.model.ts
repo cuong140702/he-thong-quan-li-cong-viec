@@ -1,0 +1,75 @@
+import { z } from 'zod'
+import { UserSchema } from 'src/shared/models/shared-user.model'
+import { RoleSchema } from 'src/shared/models/shared-role.model'
+
+export const GetUsersResSchema = z.object({
+  data: z.array(
+    UserSchema.omit({ password: true }).extend({
+      role: RoleSchema.pick({
+        id: true,
+        name: true,
+      }),
+    }),
+  ),
+  totalItems: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  totalPages: z.number(),
+})
+
+export const GetUsersQuerySchema = z
+  .object({
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce.number().int().positive().default(10),
+  })
+  .strict()
+
+export const GetUserParamsSchema = z
+  .object({
+    userId: z.coerce.number().int().positive(),
+  })
+  .strict()
+
+export const CreateUserBodySchema = UserSchema.pick({
+  email: true,
+  name: true,
+  phoneNumber: true,
+  avatar: true,
+  status: true,
+  password: true,
+  roleId: true,
+  fullName: true,
+}).strict()
+
+export const CreateUserResSchema = UserSchema.omit({
+  password: true,
+})
+
+export const UpdateUserBodySchema = CreateUserBodySchema
+
+export const LoginBodySchema = UserSchema.pick({
+  email: true,
+  password: true,
+}).strict()
+
+export const LoginResSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string(),
+})
+
+export const RefreshTokenResSchema = LoginResSchema
+
+export const RefreshTokenBodySchema = z
+  .object({
+    token: z.string(),
+  })
+  .strict()
+
+export type GetUsersResType = z.infer<typeof GetUsersResSchema>
+export type GetUsersQueryType = z.infer<typeof GetUsersQuerySchema>
+export type GetUserParamsType = z.infer<typeof GetUserParamsSchema>
+export type CreateUserBodyType = z.infer<typeof CreateUserBodySchema>
+export type UpdateUserBodyType = z.infer<typeof UpdateUserBodySchema>
+export type LoginBodyType = z.infer<typeof LoginBodySchema>
+export type RefreshTokenBodyType = z.infer<typeof RefreshTokenBodySchema>
+export type LoginResType = z.infer<typeof LoginResSchema>
