@@ -3,6 +3,7 @@ export interface AccessTokenPayloadCreate {
   fullName: string
   email: string
   roleId: string
+  roleName: string
 }
 
 export interface AccessTokenPayload extends AccessTokenPayloadCreate {

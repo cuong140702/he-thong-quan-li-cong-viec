@@ -26,7 +26,16 @@ export async function POST(request: Request) {
       secure: true,
       expires: decodedRefreshToken.exp * 1000,
     });
-    return Response.json(data);
+    return Response.json(
+      {
+        data: data,
+        statusCode: 201,
+        message: "Login token thành công",
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
     return Response.json({ message: "Login failed" }, { status: 401 });
   }

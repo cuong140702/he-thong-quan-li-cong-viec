@@ -6,7 +6,6 @@ import {
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage,
 } from "@/lib/utils";
-import { LoginResType } from "./interface/auth";
 import { redirect } from "next/navigation";
 
 let clientLogoutRequest: null | Promise<any> = null;
@@ -43,6 +42,7 @@ const customFetch = async <T>(
       baseHeaders.Authorization = `Bearer ${accessToken}`;
     }
   }
+  console.log(fullUrl);
 
   const res = await fetch(fullUrl, {
     method,
@@ -102,7 +102,7 @@ const customFetch = async <T>(
   if (isClient) {
     const normalizeUrl = normalizePath(url);
     if (["api/user/login"].includes(normalizeUrl)) {
-      const { accessToken, refreshToken } = payload as LoginResType;
+      const { accessToken, refreshToken } = data.data as any;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
     }

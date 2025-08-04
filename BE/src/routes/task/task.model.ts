@@ -1,16 +1,8 @@
-import { TaskStatus } from 'src/shared/constants/task.constant'
 import { TagSchema } from 'src/shared/models/shared-tag.model'
+import { taskSchema } from 'src/shared/models/shared-task.model'
 import z from 'zod'
 
 // Base schema: dùng cho create/update
-export const taskSchema = z.object({
-  title: z.string().min(1).max(255),
-  description: z.string().nullable().optional(),
-  status: z.enum([TaskStatus.break, TaskStatus.completed, TaskStatus.in_progress]),
-  deadline: z.coerce.date().nullable().optional(),
-  projectId: z.string().uuid().nullable().optional(),
-})
-
 export const GetTaskParamsSchema = z
   .object({
     taskId: z.string().uuid(),
@@ -51,7 +43,7 @@ export const GetTasksQuerySchema = z
 // Schema khi tạo
 export const CreateTaskBodySchema = taskSchema
   .extend({
-    tags: z.array(z.string().uuid()).optional(),
+    tags: z.array(z.string().uuid()),
   })
   .strict()
 

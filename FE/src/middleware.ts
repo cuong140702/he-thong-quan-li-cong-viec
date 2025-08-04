@@ -4,10 +4,11 @@ import type { NextRequest } from "next/server";
 const managePaths = ["/manage"];
 const privatePaths = [...managePaths];
 const unAuthPaths = ["/login"];
+const loginPaths = ["/login"];
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
   // pathname: /manage/dashboard
   const accessToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
@@ -23,6 +24,21 @@ export function middleware(request: NextRequest) {
     // 2.1 Nếu cố tình vào trang login sẽ redirect về trang chủ
     if (unAuthPaths.some((path) => pathname.startsWith(path))) {
       return NextResponse.redirect(new URL("/manage", request.url));
+    }
+
+    if (unAuthPaths.some((path) => pathname.startsWith(path))) {
+      if (
+        loginPaths.some((path) => pathname.startsWith(path)) &&
+        searchParams.get("accessToken")
+      ) {
+        return NextResponse.next();
+      }
+      return NextResponse.redirect(new URL("/manage", request.url));
+      // response.headers.set(
+      //   'x-middleware-rewrite',
+      //   new URL('/en', request.url).toString()
+      // )
+      // return response
     }
 
     // 2.2 Nhưng access token lại hết hạn

@@ -23,21 +23,18 @@ export default function RefreshToken() {
       return;
     }
     let interval: any = null;
-    checkAndRefreshToken({
-      onError: () => {
-        clearInterval(interval);
-        router.push("/login");
-      },
-    });
-    const TIMEOUT = 1000;
-    interval = setInterval(() => {
+    const onRefreshToken = () =>
       checkAndRefreshToken({
         onError: () => {
           clearInterval(interval);
           router.push("/login");
         },
       });
-    }, TIMEOUT);
+
+    onRefreshToken();
+
+    const TIMEOUT = 1000;
+    interval = setInterval(onRefreshToken, TIMEOUT);
 
     return () => {
       clearInterval(interval);

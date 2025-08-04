@@ -43,6 +43,7 @@ export class UserService {
       email: user.email,
       fullName: user.fullName,
       roleId: user.roleId,
+      roleName: user.role.name,
     })
 
     return {
@@ -58,13 +59,14 @@ export class UserService {
     }
   }
 
-  async generateTokens({ userId, email, fullName, roleId }: AccessTokenPayloadCreate) {
+  async generateTokens({ userId, email, fullName, roleId, roleName }: AccessTokenPayloadCreate) {
     const [accessToken, refreshToken] = await Promise.all([
       this.tokenService.signAccessToken({
         userId,
         email,
         fullName,
         roleId,
+        roleName,
       }),
       this.tokenService.signRefreshToken({
         userId,
@@ -97,7 +99,7 @@ export class UserService {
 
       const $deleteRefreshToken = this.userRepo.deleteRefreshToken({ refreshToken })
 
-      const $tokens = this.generateTokens({ userId: id, roleId, email, fullName })
+      const $tokens = this.generateTokens({ userId: id, roleId, email, fullName, roleName: role.name })
 
       const [, tokens] = await Promise.all([$deleteRefreshToken, $tokens])
 

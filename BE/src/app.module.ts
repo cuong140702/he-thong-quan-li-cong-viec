@@ -8,9 +8,10 @@ import CustomZodValidationPipe from './shared/pipes/custom-zod-validation.pipe'
 import { HttpExceptionFilter } from './shared/filters/http-exception.filter'
 import { CustomZodSerializerInterceptor } from './shared/interceptor/transform.interceptor'
 import { TaskModule } from './routes/task/task.module'
+import { ProjectModule } from './routes/project/project.module'
 
 @Module({
-  imports: [SharedModule, UserModule, TaskModule],
+  imports: [SharedModule, UserModule, TaskModule, ProjectModule],
   controllers: [AppController],
   providers: [
     AppService,

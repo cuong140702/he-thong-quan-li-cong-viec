@@ -1,5 +1,6 @@
 "use client";
 import authApiRequest from "@/apiRequests/auth";
+import { useAppContext } from "@/components/app-context";
 import {
   getAccessTokenFromLocalStorage,
   getRefreshTokenFromLocalStorage,
@@ -13,6 +14,7 @@ async function logoutRequest() {
 
 function Logout() {
   const router = useRouter();
+  const { setRole } = useAppContext();
   const searchParams = useSearchParams();
   const refreshTokenFromUrl = searchParams.get("refreshToken");
   const accessTokenFromUrl = searchParams.get("accessToken");
@@ -31,14 +33,14 @@ function Logout() {
         setTimeout(() => {
           ref.current = false;
         }, 1000);
-        router.push("/login");
+        setRole();
       });
     } else {
       router.push("/manage");
     }
   }, [logoutRequest, router, refreshTokenFromUrl, accessTokenFromUrl]);
 
-  return <div>Logging out...</div>;
+  return <div>Log out....</div>;
 }
 
 export default function LogoutPage() {

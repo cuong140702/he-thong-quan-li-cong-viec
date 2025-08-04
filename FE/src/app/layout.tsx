@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AppHeader } from "@/components/app.header";
 import Sidebar from "@/components/sidebar";
 import { AppContextProvider } from "@/components/app-context";
+import { Toaster } from "@/components/ui/sonner";
+import { LoadingDataProvider } from "@/components/LoadingData";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,7 +27,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <LoadingDataProvider>
+              {children}
+              <Toaster />
+            </LoadingDataProvider>
           </ThemeProvider>
         </AppContextProvider>
       </body>

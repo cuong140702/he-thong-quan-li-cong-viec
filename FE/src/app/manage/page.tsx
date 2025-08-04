@@ -6,21 +6,6 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [taskData, setTaskData] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await http.get<any>("/task", {
-        queryParams: {
-          page: 1,
-          limit: 10,
-        },
-      });
-      setTaskData(res);
-      console.log("Task data:", res);
-    };
-
-    fetchData();
-  }, []);
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>

@@ -17,12 +17,14 @@ export interface LoginResType {
 }
 
 export interface TokenPayload {
-  exp: number;
-  iat: number;
-  userId: string;
   email: string;
+  exp: number;
   fullName: string;
-  role: string;
+  iat: number;
+  roleId: string;
+  roleName: string;
+  userId: string;
+  uuid: string;
 }
 
 export interface RefreshTokenResType extends LoginResType {}

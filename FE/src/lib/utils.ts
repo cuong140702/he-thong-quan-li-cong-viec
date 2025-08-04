@@ -36,20 +36,14 @@ export const decodeToken = (token: string) => {
 export const checkAndRefreshToken = async (param?: {
   onError?: () => void;
   onSuccess?: () => void;
-  force?: boolean;
 }) => {
   const accessToken = getAccessTokenFromLocalStorage();
   const refreshToken = getRefreshTokenFromLocalStorage();
 
   if (!accessToken || !refreshToken) return;
-  const decodedAccessToken = jwt.decode(accessToken as string) as {
-    exp: number;
-    iat: number;
-  };
-  const decodedRefreshToken = jwt.decode(refreshToken as string) as {
-    exp: number;
-    iat: number;
-  };
+  const decodedAccessToken = decodeToken(accessToken);
+  const decodedRefreshToken = decodeToken(refreshToken);
+  console.log(decodedRefreshToken.exp);
 
   const now = new Date().getTime() / 1000 - 1;
 
