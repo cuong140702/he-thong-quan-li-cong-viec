@@ -6,8 +6,9 @@ import { TokenService } from './services/token.service'
 import { JwtModule } from '@nestjs/jwt'
 import { AccessTokenGuard } from './guards/access-token.guard'
 import { AuthenticationGuard } from './guards/authentication.guard'
+import { SharedWebsocketRepository } from './repositories/shared-websocket.repo'
 
-const sharedServices = [PrismaService, HashingService, TokenService]
+const sharedServices = [PrismaService, HashingService, TokenService, SharedWebsocketRepository]
 
 @Global()
 @Module({

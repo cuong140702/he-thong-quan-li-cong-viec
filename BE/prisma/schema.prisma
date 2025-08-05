@@ -15,14 +15,20 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
-  avatarUrl  String? 
+  avatarUrl String?
 
   tasks         Task[]
   projects      Project[]
   refreshTokens RefreshToken[]
   roleId        String
   role          Role           @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sentMessages     Message[]  @relation("MessageSender")
+  receivedMessages Message[]  @relation("MessageReceiver")
+  notifications    Notification[] @relation("NotificationReceiver") 
+  sentNotifications Notification[] @relation("SenderRelation") 
+  webSockets       Websocket[]
 }
+
 
 model Task {
   id          String     @id @default(uuid())
@@ -148,6 +154,51 @@ model Permission {
 
   deletedAt DateTime?
 }
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  createdAt  DateTime @default(now())
+  isRead     Boolean  @default(false)
+
+  senderId   String
+  receiverId String
+
+  sender     User @relation("MessageSender", fields: [senderId], references: [id])
+  receiver   User @relation("MessageReceiver", fields: [receiverId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  content   String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Ai nhận thông báo
+  userId String
+  user   User     @relation("NotificationReceiver", fields: [userId], references: [id])
+
+  // Ai gửi thông báo
+  senderId String?
+  sender   User?    @relation("SenderRelation", fields: [senderId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+
+model Websocket {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt DateTime @default(now())
+}
+
 
 enum HTTPMethod {
   GET

@@ -9,9 +9,12 @@ import { HttpExceptionFilter } from './shared/filters/http-exception.filter'
 import { CustomZodSerializerInterceptor } from './shared/interceptor/transform.interceptor'
 import { TaskModule } from './routes/task/task.module'
 import { ProjectModule } from './routes/project/project.module'
+import { WebsocketModule } from './websockets/websocket.module'
+import { MessageModule } from './routes/message/message.module'
+import { NotificationModule } from './routes/notification/notification.module'
 
 @Module({
-  imports: [SharedModule, UserModule, TaskModule, ProjectModule],
+  imports: [SharedModule, UserModule, TaskModule, ProjectModule, WebsocketModule, MessageModule, NotificationModule],
   controllers: [AppController],
   providers: [
     AppService,

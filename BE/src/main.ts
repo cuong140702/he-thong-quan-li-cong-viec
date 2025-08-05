@@ -3,9 +3,12 @@ import { AppModule } from './app.module'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { patchNestJsSwagger } from 'nestjs-zod'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { WebsocketAdapter } from './websockets/websocket.adapter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
+
+  app.useWebSocketAdapter(new WebsocketAdapter(app))
 
   app.enableCors({
     origin: true,
