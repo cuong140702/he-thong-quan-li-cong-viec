@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod'
-import { GetNotificationsQuery, NotificationSchema } from './notification.model'
+import { GetNotificationResSchema, GetNotificationsQuery } from './notification.model'
 
-export class NotificationSchemaDTO extends createZodDto(NotificationSchema) {}
+export class NotificationSchemaDTO extends createZodDto(GetNotificationResSchema) {}
 export class GetNotificationsQueryDTO extends createZodDto(GetNotificationsQuery) {}

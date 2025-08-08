@@ -21,7 +21,11 @@ export const GetMessagesParamsSchema = z.object({
   userId: z.string().uuid(),
 })
 
-export const CreateMessageResBodySchema = MessageSchema
+export const CreateMessageResBodySchema = MessageSchema.extend({
+  user: UserSchema.pick({
+    fullName: true,
+  }),
+})
 
 export const GetMessagesBetweenUsersResSchema = z.object({ data: z.array(MessageSchema) })
 

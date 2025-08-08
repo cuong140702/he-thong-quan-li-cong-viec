@@ -41,14 +41,10 @@ export default function MessagesList() {
   useEffect(() => {
     if (!currentUserId || !selectedUser) return;
 
-    console.log(selectedUser.id);
-
     const params: IQueryBetween = {
       user1: currentUserId,
       user2: selectedUser?.id,
     };
-
-    console.log(params);
 
     handleListMessage(params);
   }, [currentUserId, selectedUser]);
@@ -113,12 +109,12 @@ export default function MessagesList() {
   }, [message, selectedUser, currentUserId]);
 
   const handleSendMessage = () => {
-    if (!selectedUser?.id) return;
+    if (!selectedUser?.id || !newMessage.trim()) return;
 
     const payload = {
       senderId: currentUserId,
       receiverId: selectedUser.id,
-      content: newMessage,
+      content: newMessage.trim(),
       createdAt: new Date(),
     } as IGetMessageBetweenRes;
 
@@ -141,7 +137,6 @@ export default function MessagesList() {
       loadingContext?.show();
       const res = await messageApiRequest.getMessageBetween(payload);
       const responseData = res.data;
-      console.log(res);
 
       if (responseData) setMessages(responseData.data ?? []);
     } catch (error) {
@@ -235,7 +230,7 @@ export default function MessagesList() {
                 ? `Chat with ${selectedUser.fullName}`
                 : "Chọn người để bắt đầu"}
             </CardTitle>
-            <span className="text-xs text-white/70">
+            <span className="text-xs text-gray-600 dark:text-white/70">
               {selectedUser?.isOnline
                 ? "Online"
                 : selectedUser?.lastSeen
@@ -277,9 +272,21 @@ export default function MessagesList() {
                   placeholder="Type your message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
                   className="min-h-[40px] max-h-40 resize-none flex-1"
                 />
-                <Button onClick={handleSendMessage}>Send</Button>
+                <Button
+                  className="cursor-pointer"
+                  type="submit"
+                  onClick={handleSendMessage}
+                >
+                  Send
+                </Button>
               </div>
             )}
           </CardContent>

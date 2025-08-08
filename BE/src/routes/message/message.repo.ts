@@ -7,6 +7,7 @@ export class MessageRepo {
   constructor(private readonly prisma: PrismaService) {}
   async createMessage(data: CreateMessageBodyType) {
     return this.prisma.$transaction(async (tx) => {
+      // Tạo message
       const message = await tx.message.create({
         data: {
           senderId: data.senderId,
@@ -20,19 +21,29 @@ export class MessageRepo {
           senderId: true,
           receiverId: true,
           createdAt: true,
+          sender: {
+            select: {
+              fullName: true,
+            },
+          },
         },
       })
 
+      // Tạo notification
       await tx.notification.create({
         data: {
           userId: message.receiverId,
           senderId: message.senderId,
           title: 'Tin nhắn mới',
-          content: message.content,
+          content: `${message.sender.fullName} đã gửi tin nhắn cho bạn`,
         },
       })
 
-      return message
+      // Trả về message với user là sender
+      return {
+        ...message,
+        user: message.sender,
+      }
     })
   }
 

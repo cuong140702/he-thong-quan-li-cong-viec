@@ -11,7 +11,6 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Get()
-  @IsPublic()
   @ZodSerializerDto(NotificationSchemaDTO)
   async getMyNotifications(@ActiveUser('userId') userId: string) {
     return this.notificationService.getMyNotifications(userId)

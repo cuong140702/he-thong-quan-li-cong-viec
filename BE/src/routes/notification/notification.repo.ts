@@ -6,7 +6,7 @@ export class NotificationRepo {
   constructor(private readonly prisma: PrismaService) {}
 
   async getMyNotifications(userId: string) {
-    return this.prisma.notification.findMany({
+    const res = await this.prisma.notification.findMany({
       where: {
         userId,
       },
@@ -14,5 +14,7 @@ export class NotificationRepo {
         createdAt: 'desc',
       },
     })
+
+    return { data: res }
   }
 }

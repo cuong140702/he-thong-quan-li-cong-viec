@@ -46,7 +46,6 @@ export const checkAndRefreshToken = async (param?: {
   if (!accessToken || !refreshToken) return;
   const decodedAccessToken = decodeToken(accessToken);
   const decodedRefreshToken = decodeToken(refreshToken);
-  console.log(decodedRefreshToken.exp);
 
   const now = new Date().getTime() / 1000 - 1;
 

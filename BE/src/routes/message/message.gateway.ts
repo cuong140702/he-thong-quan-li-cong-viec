@@ -66,8 +66,9 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
     this.server.to(receiverRoom).emit('receive-notification', {
       userId: message.receiverId,
       title: 'Tin nhắn mới',
-      content: message.content,
+      content: `${message.sender.fullName} đã gửi tin nhắn cho bạn`,
       senderId: message.senderId,
+      createdAt: message.createdAt,
     })
 
     return message

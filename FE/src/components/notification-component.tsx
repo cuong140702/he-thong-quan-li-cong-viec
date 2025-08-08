@@ -1,11 +1,17 @@
 // components/NotificationDropdown.tsx
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext, useEffect, useMemo } from "react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { INotificationRes } from "@/utils/interface/notifications";
+import { LoadingData } from "./LoadingData";
+import notificationApiRequest from "@/apiRequests/notification";
+import { toast } from "sonner";
+import { useAppContext } from "./app-context";
+import { Sockets } from "@/lib/socket";
 
 interface Notification {
   userId: number | string;
@@ -17,30 +23,51 @@ interface Notification {
 }
 
 const NotificationDropdown = () => {
+  const loadingContext = useContext(LoadingData);
+  const { sockets } = useAppContext();
+  const { messages: message } = (sockets || {}) as Sockets;
+  const [dataNotifications, setDataNotifications] = useState<
+    INotificationRes[]
+  >([]);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Fake data
-  const notifications: Notification[] = [
-    {
-      userId: 1,
-      senderId: 2,
-      title: "Tin nhắn mới",
-      content: "Bạn có tin nhắn từ người dùng 2",
-      createdAt: new Date().toISOString(),
-      isRead: false,
-    },
-    {
-      userId: 1,
-      senderId: 3,
-      title: "Tin nhắn mới",
-      content: "Người dùng 3 vừa gửi cho bạn một tin nhắn",
-      createdAt: new Date().toISOString(),
-      isRead: true,
-    },
-  ];
+  useEffect(() => {
+    handleListMessage();
+  }, []);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  useEffect(() => {
+    if (!message) return;
+
+    const handler = (notification: INotificationRes) => {
+      setDataNotifications((prev) => [notification, ...prev]);
+    };
+
+    message.on("receive-notification", handler);
+
+    return () => {
+      message.off("receive-notification", handler);
+    };
+  }, [message]);
+
+  const handleListMessage = async () => {
+    try {
+      loadingContext?.show();
+      const res = await notificationApiRequest.getNotifications();
+      const responseData = res.data;
+      if (responseData) {
+        setDataNotifications(responseData.data ?? []);
+      }
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách!");
+    } finally {
+      loadingContext?.hide();
+    }
+  };
+
+  const unreadCount = useMemo(() => {
+    return dataNotifications.filter((noti) => !noti.isRead).length;
+  }, [dataNotifications]);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -51,15 +78,15 @@ const NotificationDropdown = () => {
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] font-semibold text-white bg-red-600 rounded-full shadow animate-pulse">
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
             {unreadCount}
           </span>
         )}
       </Button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50">
-          <Card className="shadow-none rounded-none border-none">
+        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 max-h-[400px] overflow-hidden">
+          <Card className="shadow-none rounded-none border-none h-full flex flex-col">
             <CardHeader className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <CardTitle className="text-lg font-semibold">Thông báo</CardTitle>
               <Button
@@ -70,15 +97,16 @@ const NotificationDropdown = () => {
                 Xóa tất cả
               </Button>
             </CardHeader>
-            <CardContent className="p-4">
-              <ScrollArea className="max-h-64 pr-2">
-                {notifications.length === 0 ? (
+
+            <CardContent className=" p-2 flex-1 overflow-auto">
+              <ScrollArea className="max-h-64">
+                {dataNotifications.length === 0 ? (
                   <p className="text-center text-sm text-gray-500 dark:text-gray-400 select-none">
                     Không có thông báo
                   </p>
                 ) : (
                   <ul className="flex flex-col gap-3">
-                    {notifications.map((noti, idx) => (
+                    {dataNotifications.map((noti, idx) => (
                       <li
                         key={idx}
                         className={`p-3 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors ${

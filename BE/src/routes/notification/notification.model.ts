@@ -14,5 +14,9 @@ export const NotificationSchema = z.object({
   senderId: z.string().uuid().nullable(),
 })
 
-export type NotificationSchemaType = z.infer<typeof NotificationSchema>
+export const GetNotificationResSchema = z.object({
+  data: z.array(NotificationSchema),
+})
+
+export type NotificationSchemaType = z.infer<typeof GetNotificationResSchema>
 export type GetNotificationsQueryType = z.infer<typeof GetNotificationsQuery>
