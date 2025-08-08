@@ -14,7 +14,7 @@ async function logoutRequest() {
 
 function Logout() {
   const router = useRouter();
-  const { setRole } = useAppContext();
+  const { setRole, disconnectSocket } = useAppContext();
   const searchParams = useSearchParams();
   const refreshTokenFromUrl = searchParams.get("refreshToken");
   const accessTokenFromUrl = searchParams.get("accessToken");
@@ -34,13 +34,21 @@ function Logout() {
           ref.current = false;
         }, 1000);
         setRole();
+        disconnectSocket();
       });
-    } else {
+    } else if (accessTokenFromUrl !== getAccessTokenFromLocalStorage()) {
       router.push("/manage");
     }
-  }, [logoutRequest, router, refreshTokenFromUrl, accessTokenFromUrl]);
+  }, [
+    logoutRequest,
+    router,
+    refreshTokenFromUrl,
+    accessTokenFromUrl,
+    setRole,
+    disconnectSocket,
+  ]);
 
-  return <div>Log out....</div>;
+  return null;
 }
 
 export default function LogoutPage() {

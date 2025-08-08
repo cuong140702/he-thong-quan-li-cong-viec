@@ -1,3 +1,4 @@
+import { UserSchema } from 'src/shared/models/shared-user.model'
 import z from 'zod'
 
 export const MessageSchema = z.object({
@@ -13,6 +14,7 @@ export const CreateMessageBodySchema = MessageSchema.pick({
   senderId: true,
   receiverId: true,
   content: true,
+  createdAt: true,
 })
 
 export const GetMessagesParamsSchema = z.object({
@@ -21,7 +23,11 @@ export const GetMessagesParamsSchema = z.object({
 
 export const CreateMessageResBodySchema = MessageSchema
 
-export const GetMessagesBetweenUsersResSchema = z.array(MessageSchema)
+export const GetMessagesBetweenUsersResSchema = z.object({ data: z.array(MessageSchema) })
+
+export const GetUsersMessageResSchema = z.object({
+  data: z.array(UserSchema.omit({ password: true })),
+})
 
 export type MessageSchemaType = z.infer<typeof MessageSchema>
 export type CreateMessageBodyType = z.infer<typeof CreateMessageBodySchema>

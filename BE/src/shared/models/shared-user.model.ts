@@ -9,6 +9,9 @@ export const UserSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
+  isOnline: z.boolean(),
+  avatarUrl: z.string().url().nullable().optional(),
+  lastSeen: z.date().nullable(),
 })
 
 export type UserType = z.infer<typeof UserSchema>

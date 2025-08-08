@@ -30,7 +30,8 @@ export class WebsocketAdapter extends IoAdapter {
   }
 
   async authMiddleware(socket: Socket, next: (err?: any) => void) {
-    const { authorization } = socket.handshake.headers
+    const { authorization } = socket.handshake.auth
+
     if (!authorization) {
       return next(new Error('Thiếu Authorization header'))
     }

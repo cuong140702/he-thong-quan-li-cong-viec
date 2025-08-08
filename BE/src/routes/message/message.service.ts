@@ -12,4 +12,8 @@ export class MessageService {
   async getMessagesBetweenUsers(user1: string, user2: string) {
     return await this.messageRepo.getMessagesBetweenUsers(user1, user2)
   }
+
+  async findAllExcluding(userId: string) {
+    return await this.messageRepo.findAllExcluding(userId)
+  }
 }

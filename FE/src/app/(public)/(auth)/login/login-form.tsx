@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { removeTokensFromLocalStorage } from "@/lib/utils";
 import { useAppContext } from "@/components/app-context";
+import { generateMultipleSocketInstances, Sockets } from "@/lib/socket";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -31,7 +32,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { setRole } = useAppContext();
+  const { setRole, setSockets } = useAppContext();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -52,6 +53,7 @@ export const LoginForm = () => {
     try {
       const result = await authApiRequest.login(data);
       setRole(result?.data?.user.role);
+      setSockets(result?.data?.accessToken as string);
       router.push("/manage");
     } catch (error: any) {
       console.log("Login failed:", error);

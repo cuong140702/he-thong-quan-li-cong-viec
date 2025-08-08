@@ -42,7 +42,6 @@ const customFetch = async <T>(
       baseHeaders.Authorization = `Bearer ${accessToken}`;
     }
   }
-  console.log(fullUrl);
 
   const res = await fetch(fullUrl, {
     method,

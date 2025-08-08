@@ -16,6 +16,8 @@ model User {
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
   avatarUrl String?
+  isOnline  Boolean  @default(false) 
+  lastSeen  DateTime?
 
   tasks         Task[]
   projects      Project[]

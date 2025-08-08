@@ -3,6 +3,9 @@ import { twMerge } from "tailwind-merge";
 import jwt from "jsonwebtoken";
 import { TokenPayload } from "@/utils/interface/auth";
 import authApiRequest from "@/apiRequests/auth";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import updateLocale from "dayjs/plugin/updateLocale";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -67,3 +70,15 @@ export const checkAndRefreshToken = async (param?: {
     }
   }
 };
+
+export function formatRelativeTime(date: string | Date) {
+  if (!date) return "";
+
+  const d = new Date(date);
+  const diff = Math.floor((Date.now() - d.getTime()) / 1000); // giây
+
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+  return d.toLocaleString(); // hoặc format theo bạn muốn
+}

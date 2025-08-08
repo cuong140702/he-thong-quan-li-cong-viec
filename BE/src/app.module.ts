@@ -15,6 +15,7 @@ import { NotificationModule } from './routes/notification/notification.module'
 
 @Module({
   imports: [SharedModule, UserModule, TaskModule, ProjectModule, WebsocketModule, MessageModule, NotificationModule],
+
   controllers: [AppController],
   providers: [
     AppService,

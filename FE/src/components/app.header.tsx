@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useAppContext } from "./app-context";
 import { Button } from "./ui/button";
-import { Menu } from "lucide-react";
+import { Menu, MessageCircle } from "lucide-react";
 import DarkModeToggle from "./dark-mode-toggle";
+import NotificationDropdown from "./notification-component";
 
 export const AppHeader = () => {
   const { toggleSidebar } = useAppContext();
@@ -21,7 +22,15 @@ export const AppHeader = () => {
         </Link>
       </div>
 
-      <DarkModeToggle />
+      <div className="ml-auto flex items-center gap-4">
+        <DarkModeToggle />
+        <NotificationDropdown />
+        <Link href="/manage/messages">
+          <Button variant="ghost" size="icon" className="relative">
+            <MessageCircle className="w-5 h-5" />
+          </Button>
+        </Link>
+      </div>
     </header>
   );
 };

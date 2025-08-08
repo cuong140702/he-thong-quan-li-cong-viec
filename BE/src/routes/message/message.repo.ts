@@ -12,16 +12,16 @@ export class MessageRepo {
           senderId: data.senderId,
           receiverId: data.receiverId,
           content: data.content,
+          createdAt: data.createdAt,
         },
         select: {
           id: true,
           content: true,
           senderId: true,
           receiverId: true,
+          createdAt: true,
         },
       })
-
-      console.log('mmm', message)
 
       await tx.notification.create({
         data: {
@@ -37,7 +37,7 @@ export class MessageRepo {
   }
 
   async getMessagesBetweenUsers(userA: string, userB: string): Promise<GetMessagesBetweenUsersResSchemaType> {
-    return this.prisma.message.findMany({
+    const messages = await this.prisma.message.findMany({
       where: {
         OR: [
           { senderId: userA, receiverId: userB },
@@ -47,6 +47,40 @@ export class MessageRepo {
       orderBy: {
         createdAt: 'asc',
       },
+    })
+
+    return {
+      data: messages.map((msg) => ({
+        ...msg,
+        senderId: msg.senderId,
+        receiverId: msg.receiverId,
+      })),
+    }
+  }
+
+  async findAllExcluding(userId: string) {
+    const messages = await this.prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+      },
+    })
+
+    return { data: messages }
+  }
+
+  async setUserOnlineStatus(userId: string, status: boolean) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { isOnline: status },
+    })
+  }
+
+  async updateLastSeen(userId: string, time: Date) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { lastSeen: time },
     })
   }
 }
