@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { useContext, useEffect, Dispatch, SetStateAction } from "react";
+import {
+  useContext,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useState,
+} from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -27,6 +33,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TableContext } from "./projectTable";
+import { IGetUserRes } from "@/utils/interface/user";
+import { IQueryBase } from "@/utils/interface/common";
+import userApiRequest from "@/apiRequests/user";
 
 type Props = {
   isOpen: boolean;
@@ -34,12 +43,6 @@ type Props = {
   setId: Dispatch<SetStateAction<string>>;
   onClose: () => void;
 };
-
-const userOptions = [
-  { id: "5b3fc3f0-696c-4e1b-84e8-ac1f16c4b43b", name: "Nguyễn Văn A" },
-  { id: "user2", name: "Trần Thị B" },
-  { id: "user3", name: "Lê Văn C" },
-];
 
 const schema = z.object({
   name: z.string().trim().min(1, "This field is required"),
@@ -60,6 +63,8 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
 
   const loadingContext = useContext(LoadingData);
 
+  const [dataUsers, setDataUsers] = useState<IGetUserRes[]>([]);
+
   useEffect(() => {
     if (!id) {
       form.reset({
@@ -72,6 +77,31 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
 
     handleDetailProject(id);
   }, [id]);
+
+  useEffect(() => {
+    const paramObject = {
+      page: 1,
+      limit: 1000,
+    };
+    handleGetListUser(paramObject);
+  }, []);
+
+  const handleGetListUser = async (payload: IQueryBase) => {
+    try {
+      loadingContext?.show();
+
+      const res = await userApiRequest.list(payload);
+      if (!res) return;
+
+      const responseData = res.data;
+
+      setDataUsers(responseData?.data ?? []);
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách!");
+    } finally {
+      loadingContext?.hide();
+    }
+  };
 
   const handleDetailProject = async (id: string) => {
     if (!id) return;
@@ -229,9 +259,9 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
                         <SelectValue placeholder="Select user" />
                       </SelectTrigger>
                       <SelectContent>
-                        {userOptions.map((user) => (
+                        {dataUsers?.map((user) => (
                           <SelectItem key={user.id} value={user.id}>
-                            {user.name}
+                            {user.fullName}
                           </SelectItem>
                         ))}
                       </SelectContent>

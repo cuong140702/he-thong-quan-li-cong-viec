@@ -18,6 +18,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Plus } from "lucide-react";
 import { LoadingData } from "@/components/LoadingData";
 import AutoPagination from "@/components/auto-pagination";
+import DialogDelete from "@/components/ModalDelete";
 import { IGetProjectsResponse } from "@/utils/interface/project";
 import {
   DropdownMenu,
@@ -222,6 +223,28 @@ export default function ProjectTable() {
     setIsOpen(true);
   };
 
+  const handleDelete = async () => {
+    if (!tableIdDelete) return;
+
+    try {
+      const res = await projectApiRequest.deleteProject(tableIdDelete);
+      if (data.length === 1 && pagination.pageIndex > 0) {
+        setPagination((prev) => ({
+          ...prev,
+          pageIndex: prev.pageIndex - 1,
+        }));
+      }
+      if (res.statusCode === 200) {
+        setIsRefreshList(true);
+        toast.success("Deleted successfully!");
+      }
+    } catch (error) {
+      toast.error("Đã có lỗi xảy ra!");
+    } finally {
+      handleCloseModalDelete();
+    }
+  };
+
   const handleCloseModalDelete = () => {
     setTableIdDelete("");
   };
@@ -318,6 +341,12 @@ export default function ProjectTable() {
         setId={setTableIdEdit}
         isOpen={isOpen}
         onClose={handleToggleForm}
+      />
+
+      <DialogDelete
+        onConfirm={handleDelete}
+        tableIdDelete={tableIdDelete}
+        setTableIdDelete={setTableIdDelete}
       />
     </TableContext.Provider>
   );

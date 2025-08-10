@@ -19,7 +19,6 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Get()
-  @IsPublic()
   @ZodSerializerDto(GetProjectsResDTO)
   list(@Query() query: GetProjecyQueryDTO) {
     return this.projectService.listProjects({
