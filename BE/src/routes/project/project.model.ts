@@ -74,6 +74,6 @@ export const UpdateProjectBodySchema = CreateProjectBodySchema
 export type CreateProjectBodyType = z.infer<typeof CreateProjectBodySchema>
 export type UpdateProjectBodyType = z.infer<typeof UpdateProjectBodySchema>
 export type GetProjectsResType = z.infer<typeof GetProjectsResSchema>
-export type GetProjecyQueryType = z.infer<typeof GetProjectsQuerySchema>
+export type GetProjectQueryType = z.infer<typeof GetProjectsQuerySchema>
 export type GetProjectParamsType = z.infer<typeof GetProjectParamsSchema>
 export type GetProjectByIdResType = z.infer<typeof GetProjectByIdResSchema>

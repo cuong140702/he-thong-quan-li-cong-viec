@@ -128,7 +128,7 @@ export default function ProjectTable() {
   const [tableIdDelete, setTableIdDelete] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [pagination, setPagination] = useState({
-    pageIndex: pageFromParams - 1,
+    pageIndex: pageFromParams,
     pageSize: 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -148,7 +148,10 @@ export default function ProjectTable() {
     pageCount: Math.ceil(total / pagination.pageSize),
     manualPagination: true,
     state: {
-      pagination,
+      pagination: {
+        pageIndex: pagination.pageIndex - 1,
+        pageSize: pagination.pageSize,
+      },
       sorting,
       columnFilters,
       columnVisibility,
@@ -160,27 +163,33 @@ export default function ProjectTable() {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onPaginationChange: (updater) => {
+      setPagination((old) => {
+        const newPagination =
+          typeof updater === "function" ? updater(old) : updater;
+        return {
+          ...old,
+          pageIndex: newPagination.pageIndex + 1,
+        };
+      });
+    },
   });
 
   useEffect(() => {
-    const pageFromUrl = Number(searchParams.get("page")) || 1;
     setPagination((prev) => ({
       ...prev,
-      pageIndex: pageFromUrl - 1,
+      pageIndex: pageFromParams,
     }));
-  }, [searchParams]);
+  }, [pageFromParams]);
 
   useEffect(() => {
-    const newPage = pagination.pageIndex + 1;
     setParamObject((prev) => ({
       ...prev,
-      page: newPage,
+      page: pagination.pageIndex,
     }));
-    const updatedParams = new URLSearchParams(searchParams);
-    updatedParams.set("page", String(newPage));
 
     const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(newPage));
+    params.set("page", String(pagination.pageIndex));
     router.push(`?${params.toString()}`);
   }, [pagination.pageIndex]);
 
@@ -191,23 +200,21 @@ export default function ProjectTable() {
   useEffect(() => {
     if (isRefreshList) {
       getList(paramObject);
-      setIsRefreshList(false); // reset lại
+      setIsRefreshList(false);
     }
   }, [isRefreshList]);
 
   const getList = async (payload: IQueryBase) => {
     try {
       loadingContext?.show();
-
       const res = await projectApiRequest.list(payload);
       if (!res) return;
 
       const responseData = res.data;
-
       setData(responseData?.data ?? []);
       setTotal(responseData?.totalItems || 0);
       setPagination({
-        pageIndex: (responseData?.page ?? 1) - 1,
+        pageIndex: responseData?.page ?? 1,
         pageSize: responseData?.limit ?? 10,
       });
     } catch (error) {
@@ -217,36 +224,35 @@ export default function ProjectTable() {
     }
   };
 
-  const handleToggleForm = () => setIsOpen(!isOpen);
-
-  const handleCreate = () => {
-    setIsOpen(true);
-  };
-
   const handleDelete = async () => {
     if (!tableIdDelete) return;
 
     try {
       const res = await projectApiRequest.deleteProject(tableIdDelete);
-      if (data.length === 1 && pagination.pageIndex > 0) {
-        setPagination((prev) => ({
-          ...prev,
-          pageIndex: prev.pageIndex - 1,
-        }));
-      }
+
       if (res.statusCode === 200) {
-        setIsRefreshList(true);
+        let newPageIndex = pagination.pageIndex;
+
+        if (data.length === 1 && pagination.pageIndex > 1) {
+          newPageIndex = pagination.pageIndex - 1;
+          setPagination((prev) => ({
+            ...prev,
+            pageIndex: newPageIndex,
+          }));
+        }
+
+        setParamObject((prev) => ({
+          ...prev,
+          page: newPageIndex,
+        }));
+
         toast.success("Deleted successfully!");
       }
     } catch (error) {
       toast.error("Đã có lỗi xảy ra!");
     } finally {
-      handleCloseModalDelete();
+      setTableIdDelete("");
     }
-  };
-
-  const handleCloseModalDelete = () => {
-    setTableIdDelete("");
   };
 
   return (
@@ -265,7 +271,7 @@ export default function ProjectTable() {
       <div className="w-full">
         <div className="flex items-center py-4">
           <div className="ml-auto flex items-center gap-2">
-            <Button onClick={handleCreate}>
+            <Button onClick={() => setIsOpen(true)}>
               <Plus className="w-4 h-4" />
               Add New
             </Button>
@@ -340,7 +346,7 @@ export default function ProjectTable() {
         id={tableIdEdit}
         setId={setTableIdEdit}
         isOpen={isOpen}
-        onClose={handleToggleForm}
+        onClose={() => setIsOpen(false)}
       />
 
       <DialogDelete

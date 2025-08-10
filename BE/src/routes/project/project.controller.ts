@@ -7,12 +7,11 @@ import {
   GetProjectByIdResDTO,
   GetProjectParamsDTO,
   GetProjectsResDTO,
-  GetProjecyQueryDTO,
+  GetProjectQueryDTO,
   UpdateProjectBodyDTO,
   UpdateProjectResDTO,
 } from './project.dto'
 import { ProjectService } from './project.service'
-import { IsPublic } from 'src/shared/decorators/auth.decorator'
 
 @Controller('project')
 export class ProjectController {
@@ -20,7 +19,7 @@ export class ProjectController {
 
   @Get()
   @ZodSerializerDto(GetProjectsResDTO)
-  list(@Query() query: GetProjecyQueryDTO) {
+  list(@Query() query: GetProjectQueryDTO) {
     return this.projectService.listProjects({
       query,
     })
@@ -35,7 +34,6 @@ export class ProjectController {
   }
 
   @Post()
-  @IsPublic()
   @ZodSerializerDto(CreateProjectResDTO)
   create(@Body() body: CreateProjectBodyDTO) {
     return this.projectService.createProject({ data: body })

@@ -12,9 +12,19 @@ import { ProjectModule } from './routes/project/project.module'
 import { WebsocketModule } from './websockets/websocket.module'
 import { MessageModule } from './routes/message/message.module'
 import { NotificationModule } from './routes/notification/notification.module'
+import { TagModule } from './routes/tag/tag.module'
 
 @Module({
-  imports: [SharedModule, UserModule, TaskModule, ProjectModule, WebsocketModule, MessageModule, NotificationModule],
+  imports: [
+    SharedModule,
+    UserModule,
+    TaskModule,
+    ProjectModule,
+    WebsocketModule,
+    MessageModule,
+    NotificationModule,
+    TagModule,
+  ],
 
   controllers: [AppController],
   providers: [

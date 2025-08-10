@@ -88,6 +88,7 @@ model Tag {
   name String @unique
 
   tasks Task[] @relation("TaskTags")
+  deletedAt DateTime?
 }
 
 model Project {

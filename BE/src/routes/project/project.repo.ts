@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/shared/services/prisma.service'
-import { CreateProjectBodyType, GetProjecyQueryType, UpdateProjectBodyType } from './project.model'
+import { CreateProjectBodyType, GetProjectQueryType, UpdateProjectBodyType } from './project.model'
 
 @Injectable()
 export class ProjectRepo {
   constructor(private readonly prisma: PrismaService) {}
 
-  async listProjects(query: GetProjecyQueryType) {
+  async listProjects(query: GetProjectQueryType) {
     const { page = 1, limit = 10 } = query
     const skip = (page - 1) * limit
 

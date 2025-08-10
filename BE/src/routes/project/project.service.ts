@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { CreateProjectBodyType, GetProjecyQueryType, UpdateProjectBodyType } from './project.model'
+import { CreateProjectBodyType, GetProjectQueryType, UpdateProjectBodyType } from './project.model'
 import { ProjectRepo } from './project.repo'
 @Injectable()
 export class ProjectService {
   constructor(private readonly projectRepo: ProjectRepo) {}
 
-  async listProjects(props: { query: GetProjecyQueryType }) {
+  async listProjects(props: { query: GetProjectQueryType }) {
     return await this.projectRepo.listProjects(props.query)
   }
 
