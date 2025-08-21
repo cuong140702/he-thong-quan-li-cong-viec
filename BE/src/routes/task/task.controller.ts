@@ -27,7 +27,7 @@ export class TaskController {
     })
   }
 
-  @Get()
+  @Get('task-by-tag')
   @ZodSerializerDto(GetTasksResDTO)
   getTasksByTag(@Query() query: GetTasksQueryDTO) {
     return this.taskService.getTasksByTag({

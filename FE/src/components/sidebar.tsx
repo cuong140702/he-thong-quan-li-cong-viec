@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Home, ListTodo, Clock, Users } from "lucide-react";
+import { Home, ListTodo, Clock, Users, Tag, Folder } from "lucide-react";
 import clsx from "clsx";
 import { useAppContext } from "./app-context";
 
 const navItems = [
   { href: "/manage", label: "Dashboard", icon: Home },
   { href: "/manage/tasks", label: "Tasks", icon: ListTodo },
+  { href: "/manage/project", label: "Projects", icon: Folder },
   { href: "/time-tracking", label: "Time Tracking", icon: Clock },
   { href: "/users", label: "Users", icon: Users },
+  { href: "/manage/tag", label: "Tags", icon: Tag },
 ];
 
 const Sidebar = () => {

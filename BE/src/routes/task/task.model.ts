@@ -42,10 +42,16 @@ export const GetTasksQuerySchema = z
 
 // Schema khi tạo
 export const CreateTaskBodySchema = taskSchema
-  .extend({
-    tags: z.array(z.string().uuid()),
+  .pick({
+    title: true,
+    description: true,
+    status: true,
+    deadline: true,
+    projectId: true,
   })
-  .strict()
+  .extend({
+    tags: z.array(z.string().uuid()).optional(),
+  })
 
 // Schema khi cập nhật
 export const UpdateTaskBodySchema = CreateTaskBodySchema

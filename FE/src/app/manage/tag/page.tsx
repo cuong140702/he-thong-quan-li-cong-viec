@@ -1,10 +1,10 @@
 import React, { Suspense } from "react";
-import TaskTable from "./taskTable";
+import TagTable from "./tagTable";
 
-export default function Task() {
+export default function Tag() {
   return (
     <Suspense>
-      <TaskTable />
+      <TagTable />
     </Suspense>
   );
 }

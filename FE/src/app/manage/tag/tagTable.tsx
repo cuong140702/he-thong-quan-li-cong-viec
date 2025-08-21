@@ -29,6 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { IQueryBase } from "@/utils/interface/common";
+import tagApiRequest from "@/apiRequests/tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Table,
@@ -38,9 +39,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ITaskRes } from "@/utils/interface/task";
-import taskApiRequest from "@/apiRequests/task";
-import FormTask from "./formTask";
+import { IGetTagsResponse } from "@/utils/interface/tag";
+import FormTag from "./formTag";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -53,32 +53,16 @@ export const TableContext = createContext({
   setIsRefreshList: (_: boolean) => {},
 });
 
-export const columns: ColumnDef<ITaskRes>[] = [
+export const columns: ColumnDef<IGetTagsResponse>[] = [
   {
     id: "stt",
     header: "STT",
     cell: ({ row }) => row.index + 1,
   },
   {
-    accessorKey: "title",
-    header: "Title",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("title")}</div>
-    ),
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("description")}</div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("title")}</div>
-    ),
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
     id: "actions",
@@ -122,7 +106,7 @@ export const columns: ColumnDef<ITaskRes>[] = [
   },
 ];
 
-export default function TaskTable() {
+export default function TagTable() {
   const loadingContext = useContext(LoadingData);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -141,7 +125,7 @@ export default function TaskTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [data, setData] = useState<ITaskRes[]>([]);
+  const [data, setData] = useState<IGetTagsResponse[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [paramObject, setParamObject] = useState<IQueryBase>({
     page: pageFromParams,
@@ -214,7 +198,7 @@ export default function TaskTable() {
   const getList = async (payload: IQueryBase) => {
     try {
       loadingContext?.show();
-      const res = await taskApiRequest.list(payload);
+      const res = await tagApiRequest.list(payload);
       if (!res) return;
 
       const responseData = res.data;
@@ -235,7 +219,7 @@ export default function TaskTable() {
     if (!tableIdDelete) return;
 
     try {
-      const res = await taskApiRequest.deleteTask(tableIdDelete);
+      const res = await tagApiRequest.deleteTag(tableIdDelete);
 
       if (res.statusCode === 200) {
         let newPageIndex = pagination.pageIndex;
@@ -349,7 +333,7 @@ export default function TaskTable() {
         </div>
       </div>
 
-      <FormTask
+      <FormTag
         id={tableIdEdit}
         setId={setTableIdEdit}
         isOpen={isOpen}
