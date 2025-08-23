@@ -3,9 +3,14 @@ import { twMerge } from "tailwind-merge";
 import jwt from "jsonwebtoken";
 import { TokenPayload } from "@/utils/interface/auth";
 import authApiRequest from "@/apiRequests/auth";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import updateLocale from "dayjs/plugin/updateLocale";
+import {
+  format,
+  isToday,
+  isYesterday,
+  isThisWeek,
+  isValid,
+  parseISO,
+} from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,14 +75,52 @@ export const checkAndRefreshToken = async (param?: {
   }
 };
 
-export function formatRelativeTime(date: string | Date) {
+/**
+ * Định dạng thời gian giống chat message
+ * @param date - Ngày cần định dạng (string | Date)
+ * @returns Chuỗi hiển thị
+ */
+export function formatMessageTime(date: string | Date): string {
   if (!date) return "";
 
   const d = new Date(date);
-  const diff = Math.floor((Date.now() - d.getTime()) / 1000); // giây
 
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
-  return d.toLocaleString(); // hoặc format theo bạn muốn
+  if (isNaN(d.getTime())) return ""; // invalid date
+
+  if (isToday(d)) {
+    return format(d, "HH:mm");
+  }
+
+  if (isYesterday(d)) {
+    return `Yesterday, ${format(d, "HH:mm")}`;
+  }
+
+  if (isThisWeek(d)) {
+    return `${format(d, "EEEE")}, ${format(d, "HH:mm")}`;
+    // Ví dụ: "Monday, 14:32"
+  }
+
+  return format(d, "dd/MM/yyyy HH:mm");
+}
+
+/**
+ * Định dạng ngày theo yyyy-MM-dd
+ * @param date - Ngày cần định dạng (có thể là Date hoặc string)
+ * @returns Chuỗi ngày đã định dạng hoặc undefined nếu không có date
+ */
+export function formatDate(date?: Date | string | null): string | undefined {
+  if (!date) return undefined;
+
+  const parsedDate = typeof date === "string" ? new Date(date) : date;
+
+  if (isNaN(parsedDate.getTime())) return undefined; // kiểm tra invalid date
+
+  return format(parsedDate, "yyyy-MM-dd");
+}
+
+export function toDateSafe(value?: string | Date | null): Date | undefined {
+  if (!value) return undefined;
+  if (value instanceof Date) return isValid(value) ? value : undefined;
+  const parsed = parseISO(value);
+  return isValid(parsed) ? parsed : undefined;
 }

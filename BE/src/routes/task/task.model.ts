@@ -9,8 +9,6 @@ export const GetTaskParamsSchema = z
   })
   .strict()
 
-// Schema trả về từ DB (có id, createdAt,...)
-
 // Response từ API
 export const GetTasksResSchema = z.object({
   data: z.array(
@@ -59,6 +57,10 @@ export const UpdateTaskBodySchema = CreateTaskBodySchema
 export const CreateTaskResSchema = CreateTaskBodySchema
 
 export const UpdateTaskResSchema = CreateTaskBodySchema
+
+export const GetTaskByIdSchema = taskSchema.extend({
+  tags: z.array(TagSchema).optional(),
+})
 
 // Types
 export type GetTasksResType = z.infer<typeof GetTasksResSchema>

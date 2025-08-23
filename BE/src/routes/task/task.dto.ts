@@ -2,6 +2,7 @@ import { createZodDto } from 'nestjs-zod'
 import {
   CreateTaskBodySchema,
   CreateTaskResSchema,
+  GetTaskByIdSchema,
   GetTaskParamsSchema,
   GetTasksQuerySchema,
   GetTasksResSchema,
@@ -11,6 +12,7 @@ import {
 
 export class GetTasksResDTO extends createZodDto(GetTasksResSchema) {}
 export class GetTasksQueryDTO extends createZodDto(GetTasksQuerySchema) {}
+export class GetTaskByIdDTO extends createZodDto(GetTaskByIdSchema) {}
 export class CreateTaskBodyDTO extends createZodDto(CreateTaskBodySchema) {}
 export class UpdateTaskBodyDTO extends createZodDto(UpdateTaskBodySchema) {}
 

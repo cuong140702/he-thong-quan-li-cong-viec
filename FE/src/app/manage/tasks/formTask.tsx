@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -40,6 +41,13 @@ import { TaskStatus } from "@/utils/enum/task";
 import tagApiRequest from "@/apiRequests/tag";
 import { IGetTagsResponse } from "@/utils/interface/tag";
 import { BaseSelect } from "@/components/BaseSelect";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { formatDate, toDateSafe } from "@/lib/utils";
 
 type Props = {
   isOpen: boolean;
@@ -52,7 +60,7 @@ const schema = z.object({
   title: z.string().trim().min(1, "This field is required"),
   description: z.string().optional().nullable(),
   status: z.enum(TaskStatus),
-  deadline: z.date().optional().nullable(),
+  deadline: z.date(),
   projectId: z.string().optional().nullable(),
   tags: z.array(z.string()),
 });
@@ -64,7 +72,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
       title: "",
       description: null,
       status: TaskStatus.in_progress, // giá trị mặc định
-      deadline: null,
+      deadline: undefined,
       projectId: null,
       tags: [],
     },
@@ -82,20 +90,50 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
         title: "",
         description: null,
         status: TaskStatus.in_progress, // giá trị mặc định
-        deadline: null,
+        deadline: undefined,
         projectId: null,
         tags: [],
       });
       return;
     }
 
-    // handleDetailTag(id);
+    handleDetailTask(id);
   }, [id]);
 
   useEffect(() => {
     getList({ page: 1, limit: 1000 });
     getListTag({ page: 1, limit: 1000 });
   }, []);
+
+  const handleDetailTask = async (id: string) => {
+    if (!id) return;
+
+    try {
+      loadingContext?.show();
+
+      const res = await taskApiRequest.getTask(id);
+      if (!res) return;
+
+      const responseData = res.data;
+
+      console.log(responseData);
+
+      form.reset({
+        title: responseData?.title || "",
+        description: responseData?.description || "",
+        projectId: responseData?.projectId || "",
+        status: responseData?.status as TaskStatus | undefined,
+        deadline: responseData?.deadline
+          ? new Date(responseData.deadline)
+          : undefined,
+        tags: responseData?.tags?.map((tag: any) => tag.id) || [],
+      });
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách!");
+    } finally {
+      loadingContext?.hide();
+    }
+  };
 
   const getList = async (payload: IQueryBase) => {
     try {
@@ -200,6 +238,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
       >
         <DialogHeader>
           <DialogTitle>{id ? "Update" : "Add New"}</DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         <Form {...form}>
           <form
@@ -231,6 +270,59 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                   <FormItem>
                     <Label>Description</Label>
                     <Textarea {...field} value={field.value ?? ""} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label>
+                      Status <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      value={field.value ?? undefined}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
+                        <SelectItem value="break">Break</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label>Deadline</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full text-left">
+                          {field.value
+                            ? formatDate(field.value)
+                            : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={toDateSafe(field.value)}
+                          onSelect={(date) => field.onChange(date ?? undefined)}
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

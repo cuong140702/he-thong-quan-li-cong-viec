@@ -33,4 +33,8 @@ export class TaskService {
   async getTasksByTag(props: { query: GetTasksQueryType }) {
     return await this.taskRepo.getTasksByTag(props.query)
   }
+
+  async getTaskById({ id }: { id: string }) {
+    return await this.taskRepo.getTaskById(id)
+  }
 }

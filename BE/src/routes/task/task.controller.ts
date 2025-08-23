@@ -5,6 +5,7 @@ import { ZodSerializerDto } from 'nestjs-zod'
 import {
   CreateTaskBodyDTO,
   CreateTaskResDTO,
+  GetTaskByIdDTO,
   GetTaskParamsDTO,
   GetTasksQueryDTO,
   GetTasksResDTO,
@@ -32,6 +33,14 @@ export class TaskController {
   getTasksByTag(@Query() query: GetTasksQueryDTO) {
     return this.taskService.getTasksByTag({
       query,
+    })
+  }
+
+  @Get(':taskId')
+  @ZodSerializerDto(GetTaskByIdDTO)
+  getTaskById(@Param() params: GetTaskParamsDTO) {
+    return this.taskService.getTaskById({
+      id: params.taskId,
     })
   }
 

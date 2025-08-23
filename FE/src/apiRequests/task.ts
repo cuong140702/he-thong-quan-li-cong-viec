@@ -14,6 +14,7 @@ const taskApiRequest = {
     }),
   updateTask: (id: string, body: IBodyTask) => http.put(`task/${id}`, body),
   deleteTask: (id: string) => http.delete(`task/${id}`),
+  getTask: (id: string) => http.get<ITaskRes>(`task/${id}`),
 };
 
 export default taskApiRequest;

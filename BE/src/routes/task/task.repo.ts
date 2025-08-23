@@ -156,4 +156,13 @@ export class TaskRepo {
           },
         })
   }
+
+  async getTaskById(id: string) {
+    const task = await this.prismaService.task.findUnique({
+      where: { id },
+      include: { tags: true },
+    })
+    if (!task) return null
+    return task
+  }
 }

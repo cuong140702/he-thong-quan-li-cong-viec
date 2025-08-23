@@ -1,0 +1,66 @@
+"use client";
+
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Eye, Edit2, Trash2 } from "lucide-react";
+
+type Props<T> = {
+  data?: T;
+  onView?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+};
+
+const TableAction = <T extends { id: string }>({
+  data,
+  onView,
+  onEdit,
+  onDelete,
+}: Props<T>) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="p-1">
+          <MoreHorizontal className="w-5 h-5" />
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="w-48">
+        {onView && data && (
+          <DropdownMenuItem
+            onClick={() => setTimeout(() => onView(data.id), 0)}
+            className="flex items-center gap-2"
+          >
+            <Eye className="w-4 h-4" /> View
+          </DropdownMenuItem>
+        )}
+
+        {onEdit && data && (
+          <DropdownMenuItem
+            onClick={() => setTimeout(() => onEdit(data.id), 0)}
+            className="flex items-center gap-2"
+          >
+            <Edit2 className="w-4 h-4" /> Edit
+          </DropdownMenuItem>
+        )}
+
+        {onDelete && data && (
+          <DropdownMenuItem
+            onClick={() => setTimeout(() => onDelete(data.id), 0)}
+            className="flex items-center gap-2 text-destructive"
+          >
+            <Trash2 className="w-4 h-4" /> Delete
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+export default TableAction;

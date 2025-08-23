@@ -14,22 +14,13 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { useState, createContext, useContext, useEffect, useMemo } from "react";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Plus } from "lucide-react";
 import { LoadingData } from "@/components/LoadingData";
 import AutoPagination from "@/components/auto-pagination";
 import DialogDelete from "@/components/ModalDelete";
 import { IGetProjectsResponse } from "@/utils/interface/project";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { IListDataResponse, IQueryBase } from "@/utils/interface/common";
+import { IQueryBase } from "@/utils/interface/common";
 import projectApiRequest from "@/apiRequests/project";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -41,6 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import FormProject from "./formProject";
+import TableAction from "@/components/TableAction";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -79,37 +71,19 @@ export const columns: ColumnDef<IGetProjectsResponse>[] = [
     cell: ({ row }) => {
       const { setTableIdEdit, setTableIdDelete, setIsOpen } =
         useContext(TableContext);
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="flex flex-col gap-y-2 p-[10px] cursor-pointer ">
-              <DropdownMenuItem
-                onClick={() => {
-                  setTableIdEdit(row.original.id);
-                  setIsOpen(true);
-                }}
-                className="focus:outline-none focus:ring-0 focus-visible:ring-0"
-              >
-                Sửa
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setTableIdDelete(row.original.id);
-                }}
-                className="focus:outline-none focus:ring-0 focus-visible:ring-0"
-              >
-                Xóa
-              </DropdownMenuItem>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <TableAction
+          data={row}
+          onEdit={() => {
+            setIsOpen(true);
+            setTableIdEdit(row.original.id);
+          }}
+          onDelete={() => {
+            setIsOpen(true);
+            setTableIdDelete(row.original.id);
+          }}
+        />
       );
     },
   },

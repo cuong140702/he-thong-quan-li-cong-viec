@@ -14,20 +14,11 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { useState, createContext, useContext, useEffect, useMemo } from "react";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Plus } from "lucide-react";
 import { LoadingData } from "@/components/LoadingData";
 import AutoPagination from "@/components/auto-pagination";
 import DialogDelete from "@/components/ModalDelete";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { IQueryBase } from "@/utils/interface/common";
 import tagApiRequest from "@/apiRequests/tag";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -41,6 +32,7 @@ import {
 } from "@/components/ui/table";
 import { IGetTagsResponse } from "@/utils/interface/tag";
 import FormTag from "./formTag";
+import TableAction from "@/components/TableAction";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -70,37 +62,19 @@ export const columns: ColumnDef<IGetTagsResponse>[] = [
     cell: ({ row }) => {
       const { setTableIdEdit, setTableIdDelete, setIsOpen } =
         useContext(TableContext);
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="flex flex-col gap-y-2 p-[10px] cursor-pointer ">
-              <DropdownMenuItem
-                onClick={() => {
-                  setTableIdEdit(row.original.id);
-                  setIsOpen(true);
-                }}
-                className="focus:outline-none focus:ring-0 focus-visible:ring-0"
-              >
-                Sửa
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setTableIdDelete(row.original.id);
-                }}
-                className="focus:outline-none focus:ring-0 focus-visible:ring-0"
-              >
-                Xóa
-              </DropdownMenuItem>
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <TableAction
+          data={row}
+          onEdit={() => {
+            setIsOpen(true);
+            setTableIdEdit(row.original.id);
+          }}
+          onDelete={() => {
+            setIsOpen(true);
+            setTableIdDelete(row.original.id);
+          }}
+        />
       );
     },
   },
@@ -215,6 +189,12 @@ export default function TagTable() {
     }
   };
 
+  const handleAddNew = () => {
+    setIsOpen(true);
+    setTableIdEdit("");
+    setTableIdDelete("");
+  };
+
   const handleDelete = async () => {
     if (!tableIdDelete) return;
 
@@ -262,7 +242,7 @@ export default function TagTable() {
       <div className="w-full">
         <div className="flex items-center py-4">
           <div className="ml-auto flex items-center gap-2">
-            <Button onClick={() => setIsOpen(true)}>
+            <Button onClick={handleAddNew}>
               <Plus className="w-4 h-4" />
               Add New
             </Button>

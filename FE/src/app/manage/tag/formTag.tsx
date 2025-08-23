@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -44,9 +45,7 @@ const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
 
   useEffect(() => {
     if (!id) {
-      form.reset({
-        name: "",
-      });
+      form.reset();
       return;
     }
 
@@ -138,15 +137,10 @@ const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
         }
       }}
     >
-      <DialogContent
-        className="sm:max-w-[600px] max-h-screen overflow-auto"
-        onCloseAutoFocus={() => {
-          form.reset();
-          setId("");
-        }}
-      >
+      <DialogContent className="sm:max-w-[600px] max-h-screen overflow-auto">
         <DialogHeader>
           <DialogTitle>{id ? "Update" : "Add New"}</DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         <Form {...form}>
           <form

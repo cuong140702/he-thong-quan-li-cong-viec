@@ -17,7 +17,7 @@ import messageApiRequest from "@/apiRequests/message";
 import { toast } from "sonner";
 import {
   decodeToken,
-  formatRelativeTime,
+  formatMessageTime,
   getAccessTokenFromLocalStorage,
 } from "@/lib/utils";
 import { useAppContext } from "@/components/app-context";
@@ -234,7 +234,7 @@ export default function MessagesList() {
               {selectedUser?.isOnline
                 ? "Online"
                 : selectedUser?.lastSeen
-                ? `Last seen ${formatRelativeTime(selectedUser.lastSeen)}`
+                ? `Last seen ${formatMessageTime(selectedUser.lastSeen)}`
                 : ""}
             </span>
           </CardHeader>

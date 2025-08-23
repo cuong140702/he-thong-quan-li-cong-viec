@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -199,6 +200,7 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
       >
         <DialogHeader>
           <DialogTitle>{id ? "Update" : "Add New"}</DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         <Form {...form}>
           <form
