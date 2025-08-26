@@ -1,9 +1,10 @@
+import { Suspense } from "react";
 import MessagesList from "./MessagesList";
 
 export default function MessagePage() {
   return (
-    <div>
+    <Suspense>
       <MessagesList />
-    </div>
+    </Suspense>
   );
 }

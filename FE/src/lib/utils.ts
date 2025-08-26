@@ -11,6 +11,10 @@ import {
   isValid,
   parseISO,
 } from "date-fns";
+import { Briefcase, Shield, UserCog, Users } from "lucide-react";
+import { IPermissionsRes, Permission } from "@/utils/interface/permission";
+import React, { ReactNode } from "react";
+import { useAppContext } from "@/components/app-context";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -124,3 +128,55 @@ export function toDateSafe(value?: string | Date | null): Date | undefined {
   const parsed = parseISO(value);
   return isValid(parsed) ? parsed : undefined;
 }
+
+export const roleIcons: Record<string, React.ElementType> = {
+  ADMIN: Shield,
+  STAFF: UserCog,
+};
+
+export const methodColors: Record<string, string> = {
+  GET: "bg-green-100 text-green-700",
+  POST: "bg-blue-100 text-blue-700",
+  PUT: "bg-yellow-100 text-yellow-700",
+  DELETE: "bg-red-100 text-red-700",
+};
+
+export const matchPath = (pattern: string, path: string) => {
+  const regex = new RegExp("^" + pattern.replace(/:\w+/g, "\\w+") + "$");
+  return regex.test(path);
+};
+
+export const hasPermission = (
+  permissions: IPermissionsRes[] | undefined,
+  module: Permission["module"],
+  method: Permission["method"],
+  path: string
+) => {
+  return (
+    permissions &&
+    permissions.length > 0 &&
+    permissions.some(
+      (p) =>
+        p.module.toLocaleUpperCase() === module.toLocaleUpperCase() &&
+        p.method.toLocaleUpperCase() === method.toLocaleUpperCase() &&
+        matchPath(p.path, path)
+    )
+  );
+};
+
+export const ShowIfCan = ({
+  module,
+  method,
+  path,
+  children,
+}: {
+  module: Permission["module"];
+  method: Permission["method"];
+  path: string;
+  children: ReactNode;
+}) => {
+  const { can } = useAppContext();
+
+  if (!can(module, method, path)) return null;
+  return React.createElement(React.Fragment, null, children);
+};

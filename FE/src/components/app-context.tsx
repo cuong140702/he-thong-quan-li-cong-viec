@@ -12,9 +12,12 @@ import RefreshToken from "./refresh-token";
 import {
   decodeToken,
   getAccessTokenFromLocalStorage,
+  hasPermission,
   removeTokensFromLocalStorage,
 } from "@/lib/utils";
 import { generateMultipleSocketInstances, Sockets } from "@/lib/socket";
+import { IPermissionsRes, Permission } from "@/utils/interface/permission";
+import roleApiRequest from "@/apiRequests/role";
 
 export type ContextType = {
   isSidebarOpen: boolean;
@@ -25,6 +28,13 @@ export type ContextType = {
   sockets: Sockets | null;
   setSockets: (accessToken: string) => void;
   disconnectSocket: () => void;
+  permissions: IPermissionsRes[];
+  setPermissions: (permissions: IPermissionsRes[]) => void;
+  can: (
+    module: Permission["module"],
+    method: Permission["method"],
+    path: string
+  ) => boolean;
 };
 
 const AppContext = createContext<ContextType | undefined>(undefined);
@@ -37,6 +47,8 @@ export const AppContextProvider = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [role, setRoleState] = useState<string | undefined>();
   const [sockets, setSocketsState] = useState<Sockets | null>(null);
+  const [permissions, setPermissions] = useState<IPermissionsRes[]>([]);
+
   const count = useRef(0);
 
   useEffect(() => {
@@ -45,11 +57,20 @@ export const AppContextProvider = ({
       if (accessToken) {
         const decoded = decodeToken(accessToken);
         setRoleState(decoded.roleName);
+        roleApiRequest.getRolePermissions(decoded.roleId).then((perms) => {
+          setPermissions(perms.data?.permissions || []);
+        });
         setSocketsState(generateMultipleSocketInstances(accessToken));
       }
       count.current++;
     }
   }, []);
+
+  const can = (
+    module: Permission["module"],
+    method: Permission["method"],
+    path: string
+  ): boolean => Boolean(hasPermission(permissions, module, method, path));
 
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen((prev) => !prev);
@@ -86,6 +107,9 @@ export const AppContextProvider = ({
         sockets,
         setSockets,
         disconnectSocket,
+        permissions,
+        setPermissions,
+        can,
       }}
     >
       {children}

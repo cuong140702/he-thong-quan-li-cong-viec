@@ -2,9 +2,9 @@ import { HTTPMethod } from 'src/shared/constants/role.constant'
 import { z } from 'zod'
 
 export const PermissionSchema = z.object({
-  id: z.number(),
-  name: z.string().max(500),
-  description: z.string().optional(),
+  id: z.string(),
+  module: z.string().transform((val) => val.toUpperCase()),
+  description: z.string().optional().nullable(),
   path: z.string().max(1000),
   method: z.enum([
     HTTPMethod.GET,

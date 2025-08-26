@@ -9,12 +9,15 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Eye, Edit2, Trash2 } from "lucide-react";
+import { Permission } from "@/utils/interface/permission";
+import { useAppContext } from "./app-context";
 
 type Props<T> = {
   data?: T;
   onView?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  module: Permission["module"];
 };
 
 const TableAction = <T extends { id: string }>({
@@ -22,7 +25,10 @@ const TableAction = <T extends { id: string }>({
   onView,
   onEdit,
   onDelete,
+  module,
 }: Props<T>) => {
+  const { can } = useAppContext();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,7 +38,7 @@ const TableAction = <T extends { id: string }>({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48">
-        {onView && data && (
+        {onView && data && can(module, "GET", `/${module}/${data.id}`) && (
           <DropdownMenuItem
             onClick={() => setTimeout(() => onView(data.id), 0)}
             className="flex items-center gap-2"
@@ -41,7 +47,7 @@ const TableAction = <T extends { id: string }>({
           </DropdownMenuItem>
         )}
 
-        {onEdit && data && (
+        {onEdit && data && can(module, "PUT", `/${module}/${data.id}`) && (
           <DropdownMenuItem
             onClick={() => setTimeout(() => onEdit(data.id), 0)}
             className="flex items-center gap-2"
@@ -50,7 +56,7 @@ const TableAction = <T extends { id: string }>({
           </DropdownMenuItem>
         )}
 
-        {onDelete && data && (
+        {onDelete && data && can(module, "DELETE", `/${module}/${data.id}`) && (
           <DropdownMenuItem
             onClick={() => setTimeout(() => onDelete(data.id), 0)}
             className="flex items-center gap-2 text-destructive"
@@ -62,5 +68,4 @@ const TableAction = <T extends { id: string }>({
     </DropdownMenu>
   );
 };
-
 export default TableAction;

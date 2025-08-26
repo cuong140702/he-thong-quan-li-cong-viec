@@ -13,6 +13,8 @@ import { WebsocketModule } from './websockets/websocket.module'
 import { MessageModule } from './routes/message/message.module'
 import { NotificationModule } from './routes/notification/notification.module'
 import { TagModule } from './routes/tag/tag.module'
+import { RoleModule } from './routes/role/role.module'
+import { PermissionModule } from './routes/permission/permission.module'
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { TagModule } from './routes/tag/tag.module'
     MessageModule,
     NotificationModule,
     TagModule,
+    RoleModule,
+    PermissionModule,
   ],
 
   controllers: [AppController],

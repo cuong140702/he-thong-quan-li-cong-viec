@@ -99,6 +99,7 @@ export const columns: ColumnDef<ITaskRes>[] = [
             setIsOpen(true);
             setTableIdDelete(row.original.id);
           }}
+          module="task"
         />
       );
     },
