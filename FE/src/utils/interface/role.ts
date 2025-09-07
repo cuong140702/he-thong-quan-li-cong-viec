@@ -5,7 +5,7 @@ export interface IRolesRes {
   name: string;
   description: string | null;
   deletedAt: Date | null;
-  permissions: IPermissionsRes;
+  permissions: IPermissionsRes[];
 }
 
 export interface IRolePermissions {
@@ -16,7 +16,6 @@ export interface IRolePermissions {
 }
 
 export interface IBodyRole {
-  id: string;
   name: string;
   description: string | null;
   permissions: string[];

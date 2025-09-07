@@ -35,6 +35,14 @@ export class RoleController {
     })
   }
 
+  @Get(':roleId')
+  @ZodSerializerDto(RolePermissionsResDTO)
+  getRoleById(@Param() params: GetRoleParamsDTO) {
+    return this.roleService.getRoleById({
+      id: params.roleId,
+    })
+  }
+
   @Put(':roleId/permissions')
   @ZodSerializerDto(UpdateRolePermissionsResDTO)
   updateRolePermissions(@Param() params: GetRoleParamsDTO, @Body() body: UpdateRolePermissionsDto) {

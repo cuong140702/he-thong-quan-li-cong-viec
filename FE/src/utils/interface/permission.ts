@@ -13,7 +13,7 @@ export interface IPermissionsRes {
 }
 
 export type Permission = {
-  module: "task" | "tag";
+  module: "task" | "tag" | "user" | "role" | "project" | "timelog";
   method: "GET" | "POST" | "PUT" | "DELETE";
   path: string;
 };

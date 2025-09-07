@@ -79,6 +79,8 @@ model TimeLog {
   taskId String
   task   Task   @relation(fields: [taskId], references: [id])
 
+  deletedAt DateTime?
+
   @@index([taskId])
   @@index([startTime])
 }

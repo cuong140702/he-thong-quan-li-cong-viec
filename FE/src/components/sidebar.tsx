@@ -17,10 +17,14 @@ const navItems = [
   { href: "/manage", label: "Dashboard", icon: Home },
   { href: "/manage/tasks", label: "Tasks", icon: ListTodo },
   { href: "/manage/project", label: "Projects", icon: Folder },
-  { href: "/time-tracking", label: "Time Tracking", icon: Clock },
+  { href: "/manage/time-tracking", label: "Time Tracking", icon: Clock },
   { href: "/users", label: "Users", icon: Users },
   { href: "/manage/tag", label: "Tags", icon: Tag },
-  { href: "/manage/permission", label: "Permissions", icon: ShieldCheck },
+  {
+    href: "/manage/role-permission",
+    label: "Role & Permissions",
+    icon: ShieldCheck,
+  },
 ];
 
 const Sidebar = () => {

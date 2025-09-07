@@ -3,11 +3,6 @@ import { taskSchema } from 'src/shared/models/shared-task.model'
 import z from 'zod'
 
 // Base schema: dùng cho create/update
-export const GetTaskParamsSchema = z
-  .object({
-    taskId: z.string().uuid(),
-  })
-  .strict()
 
 // Response từ API
 export const GetTasksResSchema = z.object({

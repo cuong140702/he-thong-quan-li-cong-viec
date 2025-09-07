@@ -3,12 +3,12 @@ import {
   CreateTaskBodySchema,
   CreateTaskResSchema,
   GetTaskByIdSchema,
-  GetTaskParamsSchema,
   GetTasksQuerySchema,
   GetTasksResSchema,
   UpdateTaskBodySchema,
   UpdateTaskResSchema,
 } from './task.model'
+import { GetTaskParamsSchema } from 'src/shared/models/shared-task.model'
 
 export class GetTasksResDTO extends createZodDto(GetTasksResSchema) {}
 export class GetTasksQueryDTO extends createZodDto(GetTasksQuerySchema) {}

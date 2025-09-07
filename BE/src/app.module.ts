@@ -15,6 +15,7 @@ import { NotificationModule } from './routes/notification/notification.module'
 import { TagModule } from './routes/tag/tag.module'
 import { RoleModule } from './routes/role/role.module'
 import { PermissionModule } from './routes/permission/permission.module'
+import { TimelogModule } from './routes/timelogs/timelog.module'
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { PermissionModule } from './routes/permission/permission.module'
     TagModule,
     RoleModule,
     PermissionModule,
+    TimelogModule,
   ],
 
   controllers: [AppController],

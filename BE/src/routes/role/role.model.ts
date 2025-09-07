@@ -27,6 +27,8 @@ export const GetRolesResSchema = z.object({
   totalPages: z.number(), // Tổng số trang
 })
 
+export const GetRoleByIdResSchema = RoleSchema
+
 export const GetRoleParamsSchema = z
   .object({
     roleId: z.string().uuid(),

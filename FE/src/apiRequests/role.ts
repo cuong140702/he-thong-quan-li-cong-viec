@@ -14,6 +14,7 @@ const roleApiRequest = {
     }),
   addRole: (body: IBodyRole) => http.post("role", body),
   updateRole: (id: string, body: IBodyRole) => http.put(`role/${id}`, body),
+  getRoleById: (id: string) => http.get<IRolesRes>(`role/${id}`),
   deleteRole: (id: string) => http.delete(`role/${id}`),
   getRolePermissions: (id: string) =>
     http.get<IRolePermissions>(`role/role-permission/${id}`),

@@ -9,3 +9,9 @@ export const taskSchema = z.object({
   deadline: z.coerce.date().nullable().optional(),
   projectId: z.string().uuid().nullable().optional(),
 })
+
+export const GetTaskParamsSchema = z
+  .object({
+    taskId: z.string().uuid(),
+  })
+  .strict()

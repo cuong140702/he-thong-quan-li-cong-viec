@@ -37,4 +37,8 @@ export class RoleService {
   async updateRolePermissions(roleId: string, body: UpdateRolePermissionsType) {
     return await this.roleRepo.updateRolePermissions(roleId, body)
   }
+
+  async getRoleById({ id }: { id: string }) {
+    return await this.roleRepo.getRoleById(id)
+  }
 }

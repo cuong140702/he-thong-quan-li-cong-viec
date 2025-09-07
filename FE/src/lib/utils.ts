@@ -11,7 +11,17 @@ import {
   isValid,
   parseISO,
 } from "date-fns";
-import { Briefcase, Shield, UserCog, Users } from "lucide-react";
+import {
+  Briefcase,
+  Building,
+  ClipboardList,
+  Key,
+  Shield,
+  User,
+  UserCheck,
+  UserCog,
+  Users,
+} from "lucide-react";
 import { IPermissionsRes, Permission } from "@/utils/interface/permission";
 import React, { ReactNode } from "react";
 import { useAppContext } from "@/components/app-context";
@@ -129,10 +139,42 @@ export function toDateSafe(value?: string | Date | null): Date | undefined {
   return isValid(parsed) ? parsed : undefined;
 }
 
-export const roleIcons: Record<string, React.ElementType> = {
+// 1. Role base mapping (giữ nguyên)
+const baseRoleIcons: Record<string, React.ElementType> = {
   ADMIN: Shield,
-  STAFF: UserCog,
+  CLIENT: UserCog,
 };
+
+// 2. Danh sách icon cho role phát sinh
+const iconList = [
+  User,
+  Users,
+  UserCog,
+  UserCheck,
+  Shield,
+  Key,
+  Briefcase,
+  Building,
+  ClipboardList,
+];
+
+// 3. Hash string → number
+function hashStringToNumber(str: string): number {
+  return str.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+}
+
+// 4. Hàm lấy icon
+export function getRoleIcon(role: string): React.ElementType {
+  // Nếu role nằm trong baseRoleIcons thì return luôn
+  if (baseRoleIcons[role]) {
+    return baseRoleIcons[role];
+  }
+
+  // Nếu role khác → sinh icon ngẫu nhiên nhưng cố định
+  const hash = hashStringToNumber(role.toUpperCase());
+  const index = hash % iconList.length;
+  return iconList[index];
+}
 
 export const methodColors: Record<string, string> = {
   GET: "bg-green-100 text-green-700",
@@ -179,4 +221,10 @@ export const ShowIfCan = ({
 
   if (!can(module, method, path)) return null;
   return React.createElement(React.Fragment, null, children);
+};
+
+export const formatDateTime = (date: Date | string) => {
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return format(d, "dd/MM/yyyy, HH:mm:ss");
 };

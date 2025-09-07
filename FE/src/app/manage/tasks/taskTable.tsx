@@ -33,7 +33,7 @@ import { ITaskRes } from "@/utils/interface/task";
 import taskApiRequest from "@/apiRequests/task";
 import FormTask from "./formTask";
 import TableAction from "@/components/TableAction";
-import { formatDate } from "@/lib/utils";
+import { formatDate, ShowIfCan } from "@/lib/utils";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -260,13 +260,13 @@ export default function TaskTable() {
       }}
     >
       <div className="w-full">
-        <div className="flex items-center py-4">
-          <div className="ml-auto flex items-center gap-2">
+        <div className="flex justify-end py-4">
+          <ShowIfCan module="task" method="POST" path="/task">
             <Button onClick={() => setIsOpen(true)}>
               <Plus className="w-4 h-4" />
               Add New
             </Button>
-          </div>
+          </ShowIfCan>
         </div>
 
         <div className="rounded-md border">

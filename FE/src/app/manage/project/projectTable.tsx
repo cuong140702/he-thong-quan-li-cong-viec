@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/table";
 import FormProject from "./formProject";
 import TableAction from "@/components/TableAction";
+import { ShowIfCan } from "@/lib/utils";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -83,6 +84,7 @@ export const columns: ColumnDef<IGetProjectsResponse>[] = [
             setIsOpen(true);
             setTableIdDelete(row.original.id);
           }}
+          module="project"
         />
       );
     },
@@ -243,13 +245,13 @@ export default function ProjectTable() {
       }}
     >
       <div className="w-full">
-        <div className="flex items-center py-4">
-          <div className="ml-auto flex items-center gap-2">
+        <div className="flex justify-end py-4">
+          <ShowIfCan module="project" method="POST" path="/project">
             <Button onClick={() => setIsOpen(true)}>
               <Plus className="w-4 h-4" />
               Add New
             </Button>
-          </div>
+          </ShowIfCan>
         </div>
 
         <div className="rounded-md border">

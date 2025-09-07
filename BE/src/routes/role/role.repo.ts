@@ -168,6 +168,15 @@ export class RoleRepo {
     }
   }
 
+  async getRoleById(id: string) {
+    const role = await this.prismaService.role.findUnique({
+      where: { id },
+      include: { permissions: true },
+    })
+    if (!role) throw new NotFoundException(`Role ${id} not found`)
+    return role
+  }
+
   async updateRolePermissions(roleId: string, body: UpdateRolePermissionsType): Promise<UpdateRolePermissionsResType> {
     const role = await this.prismaService.role.findUnique({
       where: { id: roleId },
