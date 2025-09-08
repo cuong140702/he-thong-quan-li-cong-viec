@@ -1,11 +1,38 @@
 "use client";
 
+import { useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
+import CountUp from "react-countup";
+import dashboardApiRequest from "@/apiRequests/dashboard";
+import { LoadingData } from "@/components/LoadingData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { http } from "@/utils/api";
-import { useEffect, useState } from "react";
+import { IDashboardRes } from "@/utils/interface/dashboard";
 
 export default function Home() {
-  const [taskData, setTaskData] = useState<any>(null);
+  const loadingContext = useContext(LoadingData);
+  const [taskData, setTaskData] = useState<IDashboardRes>();
+
+  useEffect(() => {
+    handleGetDashboardData();
+  }, []);
+
+  const handleGetDashboardData = async () => {
+    try {
+      loadingContext?.show();
+
+      const res = await dashboardApiRequest.getDashboard();
+      if (!res) return;
+
+      const responseData = res.data;
+
+      setTaskData(responseData);
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách!");
+    } finally {
+      loadingContext?.hide();
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>
@@ -18,7 +45,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-              12
+              <CountUp end={taskData?.totalTasks ?? 0} duration={2} />
             </p>
           </CardContent>
         </Card>
@@ -30,7 +57,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-              8
+              <CountUp end={taskData?.completedTasks ?? 0} duration={2} />
             </p>
           </CardContent>
         </Card>
@@ -44,7 +71,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-sky-600 dark:text-sky-400">
-              24h
+              <CountUp end={taskData?.weeklyHours ?? 0} duration={2} /> giờ
             </p>
           </CardContent>
         </Card>

@@ -16,6 +16,7 @@ import { TagModule } from './routes/tag/tag.module'
 import { RoleModule } from './routes/role/role.module'
 import { PermissionModule } from './routes/permission/permission.module'
 import { TimelogModule } from './routes/timelogs/timelog.module'
+import { DashboardModule } from './routes/dashboard/dashboard.module'
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TimelogModule } from './routes/timelogs/timelog.module'
     RoleModule,
     PermissionModule,
     TimelogModule,
+    DashboardModule,
   ],
 
   controllers: [AppController],

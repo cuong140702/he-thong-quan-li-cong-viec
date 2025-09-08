@@ -10,8 +10,10 @@ import {
   Folder,
   ShieldCheck,
 } from "lucide-react";
-import clsx from "clsx";
 import { useAppContext } from "./app-context";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { useHasMounted } from "./customHook";
 
 const navItems = [
   { href: "/manage", label: "Dashboard", icon: Home },
@@ -29,10 +31,15 @@ const navItems = [
 
 const Sidebar = () => {
   const { isSidebarOpen } = useAppContext();
+  const pathname = usePathname();
+
+  const hasMounted = useHasMounted();
+
+  if (!hasMounted) return <></>;
 
   return (
     <aside
-      className={clsx(
+      className={cn(
         "h-full w-60 shrink-0 bg-muted/40 text-foreground border-r border-border transition-all duration-300",
         {
           "hidden lg:block": !isSidebarOpen,
@@ -45,19 +52,23 @@ const Sidebar = () => {
       </div>
 
       <nav className="px-4 py-6 space-y-2">
-        {navItems.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={clsx(
-              "flex items-center gap-3 py-2 px-3 rounded-lg text-muted-foreground transition-colors",
-              "hover:bg-accent hover:text-accent-foreground"
-            )}
-          >
-            <Icon className="w-5 h-5" />
-            <span className="text-sm font-medium">{label}</span>
-          </Link>
-        ))}
+        {navItems.map((Item, index) => {
+          const isActive = pathname === Item.href;
+          return (
+            <Link
+              key={index}
+              href={Item.href}
+              className={cn(
+                "flex items-center gap-3 py-2 px-3 rounded-lg text-muted-foreground transition-colors",
+                "hover:bg-accent hover:text-accent-foreground",
+                isActive && "bg-accent text-accent-foreground font-medium"
+              )}
+            >
+              <Item.icon className="w-5 h-5" />
+              <span className="text-sm font-medium">{Item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );
