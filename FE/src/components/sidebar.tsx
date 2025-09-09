@@ -16,12 +16,36 @@ import { cn } from "@/lib/utils";
 import { useHasMounted } from "./customHook";
 
 const navItems = [
-  { href: "/manage", label: "Dashboard", icon: Home },
-  { href: "/manage/tasks", label: "Tasks", icon: ListTodo },
-  { href: "/manage/project", label: "Projects", icon: Folder },
-  { href: "/manage/time-tracking", label: "Time Tracking", icon: Clock },
-  { href: "/users", label: "Users", icon: Users },
-  { href: "/manage/tag", label: "Tags", icon: Tag },
+  {
+    href: "/manage",
+    label: "Dashboard",
+    icon: Home,
+  },
+  {
+    href: "/manage/tasks",
+    label: "Tasks",
+    icon: ListTodo,
+  },
+  {
+    href: "/manage/project",
+    label: "Projects",
+    icon: Folder,
+  },
+  {
+    href: "/manage/time-tracking",
+    label: "Time Tracking",
+    icon: Clock,
+  },
+  {
+    href: "/users",
+    label: "Users",
+    icon: Users,
+  },
+  {
+    href: "/manage/tag",
+    label: "Tags",
+    icon: Tag,
+  },
   {
     href: "/manage/role-permission",
     label: "Role & Permissions",
