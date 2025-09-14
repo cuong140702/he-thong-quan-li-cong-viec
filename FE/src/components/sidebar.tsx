@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Home,
   ListTodo,
@@ -11,9 +10,9 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useAppContext } from "./app-context";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useHasMounted } from "./customHook";
+import { Link, usePathname } from "@/i18n/navigation";
 
 const navItems = [
   {

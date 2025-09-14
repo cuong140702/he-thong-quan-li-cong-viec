@@ -6,7 +6,9 @@ import {
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage,
 } from "@/lib/utils";
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
+import Cookies from "js-cookie";
+import { defaultLocale } from "@/i18n/config";
 
 let clientLogoutRequest: null | Promise<any> = null;
 const customFetch = async <T>(
@@ -70,6 +72,7 @@ const customFetch = async <T>(
     // };
     if (res.status === 401) {
       if (isClient) {
+        const locale = Cookies.get("NEXT_LOCALE");
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch("/api/user/logout", {
             method: "POST",
@@ -84,7 +87,7 @@ const customFetch = async <T>(
           } finally {
             removeTokensFromLocalStorage();
             clientLogoutRequest = null;
-            location.href = "/login";
+            location.href = `/${locale}/login`;
           }
         }
       } else {
@@ -93,7 +96,11 @@ const customFetch = async <T>(
         const accessToken = (options?.headers as any)?.Authorization.split(
           "Bearer "
         )[1];
-        redirect(`/logout?accessToken=${accessToken}`);
+        const locale = Cookies.get("NEXT_LOCALE");
+        redirect({
+          href: `/login?accessToken=${accessToken}`,
+          locale: locale ?? defaultLocale,
+        });
       }
     }
   }

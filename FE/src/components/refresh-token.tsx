@@ -1,16 +1,9 @@
 "use client";
 
-import {
-  checkAndRefreshToken,
-  getAccessTokenFromLocalStorage,
-  getRefreshTokenFromLocalStorage,
-  setAccessTokenToLocalStorage,
-  setRefreshTokenToLocalStorage,
-} from "@/lib/utils";
-import { usePathname, useRouter } from "next/navigation";
+import { checkAndRefreshToken } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useEffect } from "react";
-import jwt from "jsonwebtoken";
-import authApiRequest from "@/apiRequests/auth";
 
 // Những page sau sẽ không check refesh token
 const UNAUTHENTICATED_PATH = ["/login"];

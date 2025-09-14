@@ -17,6 +17,7 @@ import { RoleModule } from './routes/role/role.module'
 import { PermissionModule } from './routes/permission/permission.module'
 import { TimelogModule } from './routes/timelogs/timelog.module'
 import { DashboardModule } from './routes/dashboard/dashboard.module'
+import { MediaModule } from './routes/media/media.module'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DashboardModule } from './routes/dashboard/dashboard.module'
     PermissionModule,
     TimelogModule,
     DashboardModule,
+    MediaModule,
   ],
 
   controllers: [AppController],

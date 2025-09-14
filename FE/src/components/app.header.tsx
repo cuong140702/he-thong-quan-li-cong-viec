@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { Menu, MessageCircle } from "lucide-react";
 import DarkModeToggle from "./dark-mode-toggle";
 import NotificationDropdown from "./notification-component";
+import SwitchLanguage from "./switch-language";
 
 export const AppHeader = () => {
   const { toggleSidebar } = useAppContext();
@@ -25,6 +26,7 @@ export const AppHeader = () => {
       <div className="ml-auto flex items-center gap-4">
         <DarkModeToggle />
         <NotificationDropdown />
+        <SwitchLanguage />
         <Link href="/manage/messages">
           <Button variant="ghost" size="icon" className="relative">
             <MessageCircle className="w-5 h-5" />

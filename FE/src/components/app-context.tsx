@@ -56,6 +56,9 @@ export const AppContextProvider = ({
       const accessToken = getAccessTokenFromLocalStorage();
       if (accessToken) {
         const decoded = decodeToken(accessToken);
+        if (!decoded) return;
+        console.log(decoded);
+
         setRoleState(decoded.roleName);
         roleApiRequest.getRolePermissions(decoded.roleId).then((perms) => {
           setPermissions(perms.data?.permissions || []);

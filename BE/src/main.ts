@@ -8,6 +8,10 @@ import { WebsocketAdapter } from './websockets/websocket.adapter'
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
+  // app.useStaticAssets(UPLOAD_DIR, {
+  //   prefix: '/media/static',
+  // })
+
   app.useWebSocketAdapter(new WebsocketAdapter(app))
 
   app.enableCors({

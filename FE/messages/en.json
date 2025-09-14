@@ -1,0 +1,22 @@
+{
+  "ErrorMessage": {
+    "invalidEmail": "Invalid email",
+    "required": "This field is required",
+    "minmaxPassword": "Password must be between 6 and 100 characters"
+  },
+  "Login": {
+    "title": "Login",
+    "description": "Manager login area",
+    "cardDescription": "Enter your email and password to log in to the system",
+    "buttonLogin": "Login",
+    "loginWithGoogle": "Login with Google"
+  },
+  "HomePage": {
+    "title": "Hello world!"
+  },
+  "SwitchLanguage": {
+    "title": "Switch language",
+    "en": "English",
+    "vi": "Vietnamese"
+  }
+}
