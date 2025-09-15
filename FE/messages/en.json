@@ -11,12 +11,21 @@
     "buttonLogin": "Login",
     "loginWithGoogle": "Login with Google"
   },
-  "HomePage": {
-    "title": "Hello world!"
+  "Dashboard": {
+    "title": "Dashboard"
   },
   "SwitchLanguage": {
     "title": "Switch language",
     "en": "English",
     "vi": "Vietnamese"
+  },
+  "Menu": {
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "projects": "Projects",
+    "timeTracking": "Time Tracking",
+    "users": "Users",
+    "tags": "Tags",
+    "role & permission": "Role & Permission"
   }
 }

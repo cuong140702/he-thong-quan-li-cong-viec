@@ -9,56 +9,33 @@ import {
   Folder,
   ShieldCheck,
 } from "lucide-react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useAppContext } from "./app-context";
 import { cn } from "@/lib/utils";
 import { useHasMounted } from "./customHook";
-import { Link, usePathname } from "@/i18n/navigation";
-
-const navItems = [
-  {
-    href: "/manage",
-    label: "Dashboard",
-    icon: Home,
-  },
-  {
-    href: "/manage/tasks",
-    label: "Tasks",
-    icon: ListTodo,
-  },
-  {
-    href: "/manage/project",
-    label: "Projects",
-    icon: Folder,
-  },
-  {
-    href: "/manage/time-tracking",
-    label: "Time Tracking",
-    icon: Clock,
-  },
-  {
-    href: "/users",
-    label: "Users",
-    icon: Users,
-  },
-  {
-    href: "/manage/tag",
-    label: "Tags",
-    icon: Tag,
-  },
-  {
-    href: "/manage/role-permission",
-    label: "Role & Permissions",
-    icon: ShieldCheck,
-  },
-];
 
 const Sidebar = () => {
   const { isSidebarOpen } = useAppContext();
   const pathname = usePathname();
-
   const hasMounted = useHasMounted();
+  const t = useTranslations("Menu");
 
-  if (!hasMounted) return <></>;
+  if (!hasMounted) return null;
+
+  const navItems = [
+    { href: "/manage", label: t("dashboard"), icon: Home },
+    { href: "/manage/tasks", label: t("tasks"), icon: ListTodo },
+    { href: "/manage/project", label: t("projects"), icon: Folder },
+    { href: "/manage/time-tracking", label: t("timeTracking"), icon: Clock },
+    { href: "/users", label: t("users"), icon: Users },
+    { href: "/manage/tag", label: t("tags"), icon: Tag },
+    {
+      href: "/manage/role-permission",
+      label: t("role & permission"),
+      icon: ShieldCheck,
+    },
+  ];
 
   return (
     <aside

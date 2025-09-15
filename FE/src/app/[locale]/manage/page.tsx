@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 
 export default function Home(props: { params: Promise<{ locale: string }> }) {
   const { locale } = use(props.params);
-  const t = useTranslations("HomePage");
+  const t = useTranslations("Dashboard");
   const loadingContext = useContext(LoadingData);
   const [taskData, setTaskData] = useState<IDashboardRes>();
 

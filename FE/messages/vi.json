@@ -11,12 +11,21 @@
     "buttonLogin": "Đăng nhập",
     "loginWithGoogle": "Đăng nhập với Google"
   },
-  "HomePage": {
-    "title": "Xin chào thế giới!"
+  "Dashboard": {
+    "title": "Bảng điều khiển"
   },
   "SwitchLanguage": {
     "title": "Chuyển ngôn ngữ",
     "en": "Tiếng Anh",
     "vi": "Tiếng Việt"
+  },
+  "Menu": {
+    "dashboard": "Bảng điều khiển",
+    "tasks": "Công việc",
+    "projects": "Dự án",
+    "timeTracking": "Theo dõi thời gian",
+    "users": "Người dùng",
+    "tags": "Thẻ",
+    "role & permission": "Vai trò & quyền hạn"
   }
 }

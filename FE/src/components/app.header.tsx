@@ -7,6 +7,7 @@ import { Menu, MessageCircle } from "lucide-react";
 import DarkModeToggle from "./dark-mode-toggle";
 import NotificationDropdown from "./notification-component";
 import SwitchLanguage from "./switch-language";
+import DropdownAvatar from "@/app/[locale]/manage/dropdown-avatar";
 
 export const AppHeader = () => {
   const { toggleSidebar } = useAppContext();
@@ -33,6 +34,7 @@ export const AppHeader = () => {
           </Button>
         </Link>
       </div>
+      <DropdownAvatar />
     </header>
   );
 };
