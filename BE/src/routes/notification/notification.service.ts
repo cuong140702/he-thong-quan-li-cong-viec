@@ -9,4 +9,15 @@ export class NotificationService {
   async getMyNotifications(userId: string) {
     return this.notificationRepo.getMyNotifications(userId)
   }
+
+  async clearAll(userId: string) {
+    try {
+      await this.notificationRepo.clearAll(userId)
+      return {
+        message: 'Delete all successfully',
+      }
+    } catch (error) {
+      throw error
+    }
+  }
 }

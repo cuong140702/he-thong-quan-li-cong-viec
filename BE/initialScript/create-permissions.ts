@@ -3,7 +3,7 @@ import { AppModule } from 'src/app.module'
 import { HTTPMethod, RoleName } from 'src/shared/constants/role.constant'
 import { PrismaService } from 'src/shared/services/prisma.service'
 
-const ClientModule = ['TASK', 'USER', 'TAG', 'ROLE', 'PERMISSION', 'TIMELOG', 'DASHBOARD']
+const ClientModule = ['TASK', 'USER', 'TAG', 'ROLE', 'PERMISSION', 'TIMELOG', 'DASHBOARD', 'MESSAGES']
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)

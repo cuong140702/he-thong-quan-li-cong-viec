@@ -17,4 +17,16 @@ export class NotificationRepo {
 
     return { data: res }
   }
+
+  async clearAll(userId: string) {
+    return await this.prisma.notification.updateMany({
+      where: {
+        userId: userId,
+      },
+      data: {
+        //@ts-ignore
+        deletedAt: new Date(),
+      },
+    })
+  }
 }

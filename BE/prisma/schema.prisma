@@ -192,6 +192,8 @@ model Notification {
   senderId String?
   sender   User?    @relation("SenderRelation", fields: [senderId], references: [id])
 
+  deletedAt DateTime?
+
   @@index([userId])
   @@index([isRead])
 }

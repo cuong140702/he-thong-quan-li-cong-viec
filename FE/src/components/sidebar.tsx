@@ -24,12 +24,36 @@ const Sidebar = () => {
   if (!hasMounted) return null;
 
   const navItems = [
-    { href: "/manage", label: t("dashboard"), icon: Home },
-    { href: "/manage/tasks", label: t("tasks"), icon: ListTodo },
-    { href: "/manage/project", label: t("projects"), icon: Folder },
-    { href: "/manage/time-tracking", label: t("timeTracking"), icon: Clock },
-    { href: "/users", label: t("users"), icon: Users },
-    { href: "/manage/tag", label: t("tags"), icon: Tag },
+    {
+      href: "/manage",
+      label: t("dashboard"),
+      icon: Home,
+    },
+    {
+      href: "/manage/tasks",
+      label: t("tasks"),
+      icon: ListTodo,
+    },
+    {
+      href: "/manage/project",
+      label: t("projects"),
+      icon: Folder,
+    },
+    {
+      href: "/manage/time-tracking",
+      label: t("timeTracking"),
+      icon: Clock,
+    },
+    {
+      href: "/manage/user",
+      label: t("users"),
+      icon: Users,
+    },
+    {
+      href: "/manage/tag",
+      label: t("tags"),
+      icon: Tag,
+    },
     {
       href: "/manage/role-permission",
       label: t("role & permission"),

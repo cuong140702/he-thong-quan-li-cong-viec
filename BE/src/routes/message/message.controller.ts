@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, Post, Query } from '@nestjs/common'
 import { ZodSerializerDto } from 'nestjs-zod'
-import { IsPublic } from 'src/shared/decorators/auth.decorator'
 import {
   CreateMessageBodyDTO,
   CreateMessageResBodyDTO,

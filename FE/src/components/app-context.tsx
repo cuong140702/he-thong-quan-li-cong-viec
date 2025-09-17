@@ -35,6 +35,8 @@ export type ContextType = {
     method: Permission["method"],
     path: string
   ) => boolean;
+  userId: string;
+  setUserId: (userId: string) => void;
 };
 
 const AppContext = createContext<ContextType | undefined>(undefined);
@@ -48,6 +50,7 @@ export const AppContextProvider = ({
   const [role, setRoleState] = useState<string | undefined>();
   const [sockets, setSocketsState] = useState<Sockets | null>(null);
   const [permissions, setPermissions] = useState<IPermissionsRes[]>([]);
+  const [userId, setUserId] = useState<string>("");
 
   const count = useRef(0);
 
@@ -57,9 +60,8 @@ export const AppContextProvider = ({
       if (accessToken) {
         const decoded = decodeToken(accessToken);
         if (!decoded) return;
-        console.log(decoded);
-
         setRoleState(decoded.roleName);
+        setUserId(decoded.userId.toString());
         roleApiRequest.getRolePermissions(decoded.roleId).then((perms) => {
           setPermissions(perms.data?.permissions || []);
         });
@@ -113,6 +115,8 @@ export const AppContextProvider = ({
         permissions,
         setPermissions,
         can,
+        userId,
+        setUserId,
       }}
     >
       {children}

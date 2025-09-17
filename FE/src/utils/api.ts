@@ -72,7 +72,7 @@ const customFetch = async <T>(
     // };
     if (res.status === 401) {
       if (isClient) {
-        const locale = Cookies.get("NEXT_LOCALE");
+        const locale = Cookies.get("NEXT_LOCALE") ?? defaultLocale;
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch("/api/user/logout", {
             method: "POST",

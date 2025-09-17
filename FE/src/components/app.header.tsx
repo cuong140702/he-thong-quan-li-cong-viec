@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useAppContext } from "./app-context";
 import { Button } from "./ui/button";
 import { Menu, MessageCircle } from "lucide-react";
@@ -8,10 +7,13 @@ import DarkModeToggle from "./dark-mode-toggle";
 import NotificationDropdown from "./notification-component";
 import SwitchLanguage from "./switch-language";
 import DropdownAvatar from "@/app/[locale]/manage/dropdown-avatar";
+import { Link } from "@/i18n/navigation";
+import { useHasMounted } from "./customHook";
 
 export const AppHeader = () => {
   const { toggleSidebar } = useAppContext();
-
+  const hasMounted = useHasMounted();
+  if (!hasMounted) return null;
   return (
     <header className="flex items-center justify-between h-[61px] p-4 border-b bg-muted/40 text-foreground shadow-sm">
       <div className="flex items-center gap-4">
@@ -28,7 +30,7 @@ export const AppHeader = () => {
         <DarkModeToggle />
         <NotificationDropdown />
         <SwitchLanguage />
-        <Link href="/manage/messages">
+        <Link href={`/manage/messages`}>
           <Button variant="ghost" size="icon" className="relative">
             <MessageCircle className="w-5 h-5" />
           </Button>

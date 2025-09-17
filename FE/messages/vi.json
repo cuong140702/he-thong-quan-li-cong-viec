@@ -27,5 +27,10 @@
     "users": "Người dùng",
     "tags": "Thẻ",
     "role & permission": "Vai trò & quyền hạn"
+  },
+  "ManageUser": {
+    "fullName": "Họ và tên",
+    "email": "Email",
+    "role": "Vai trò"
   }
 }

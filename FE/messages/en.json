@@ -27,5 +27,10 @@
     "users": "Users",
     "tags": "Tags",
     "role & permission": "Role & Permission"
+  },
+  "ManageUser": {
+    "fullName": "Full Name",
+    "email": "Email",
+    "role": "Role"
   }
 }

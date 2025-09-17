@@ -7,6 +7,8 @@ const userApiRequest = {
     http.get<IListDataResponse<IGetUserRes[]>>("user", {
       queryParams: payload,
     }),
+
+  deleteUser: (id: string) => http.delete(`user/${id}`),
 };
 
 export default userApiRequest;

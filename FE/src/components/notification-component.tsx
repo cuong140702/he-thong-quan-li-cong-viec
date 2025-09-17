@@ -13,18 +13,9 @@ import { toast } from "sonner";
 import { useAppContext } from "./app-context";
 import { Sockets } from "@/lib/socket";
 
-interface Notification {
-  userId: number | string;
-  senderId: number | string;
-  title: string;
-  content: string;
-  createdAt: string;
-  isRead?: boolean;
-}
-
 const NotificationDropdown = () => {
   const loadingContext = useContext(LoadingData);
-  const { sockets } = useAppContext();
+  const { sockets, userId } = useAppContext();
   const { messages: message } = (sockets || {}) as Sockets;
   const [dataNotifications, setDataNotifications] = useState<
     INotificationRes[]
@@ -55,11 +46,30 @@ const NotificationDropdown = () => {
       loadingContext?.show();
       const res = await notificationApiRequest.getNotifications();
       const responseData = res.data;
+      console.log("res", responseData?.data);
+
       if (responseData) {
         setDataNotifications(responseData.data ?? []);
       }
     } catch (error) {
       toast.error("Lỗi khi tải danh sách!");
+    } finally {
+      loadingContext?.hide();
+    }
+  };
+
+  const handleDelete = async () => {
+    loadingContext?.show();
+
+    try {
+      const res = await notificationApiRequest.deleteAllNotification();
+
+      if (res.statusCode === 200) {
+        toast.success("Deleted successfully!");
+        handleListMessage();
+      }
+    } catch (error) {
+      toast.error("Đã có lỗi xảy ra!");
     } finally {
       loadingContext?.hide();
     }
@@ -93,6 +103,7 @@ const NotificationDropdown = () => {
                 variant="ghost"
                 size="sm"
                 className="text-red-500 hover:bg-red-100 dark:hover:bg-red-900"
+                onClick={handleDelete}
               >
                 Xóa tất cả
               </Button>

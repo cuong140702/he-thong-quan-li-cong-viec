@@ -20,6 +20,7 @@ export function middleware(request: NextRequest) {
   const locale = request.cookies.get("NEXT_LOCALE")?.value ?? defaultLocale;
   // 1. Chưa đăng nhập thì không cho vào private paths
   if (privatePaths.some((path) => pathname.startsWith(path)) && !refreshToken) {
+    alert(locale);
     const url = new URL(`/${locale}/login`, request.url);
     url.searchParams.set("clearTokens", "true");
     return NextResponse.redirect(url);
