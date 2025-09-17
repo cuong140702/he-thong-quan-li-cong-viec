@@ -198,4 +198,8 @@ export class UserService {
       throw new Error('Đăng xuất thất bại')
     }
   }
+
+  async getUserById({ id }: { id: string }) {
+    return await this.userRepo.getUserById(id)
+  }
 }

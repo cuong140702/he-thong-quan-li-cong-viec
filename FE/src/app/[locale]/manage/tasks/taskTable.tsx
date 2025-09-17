@@ -97,7 +97,6 @@ export const columns: ColumnDef<ITaskRes>[] = [
             setTableIdEdit(row.original.id);
           }}
           onDelete={() => {
-            setIsOpen(true);
             setTableIdDelete(row.original.id);
           }}
           module="task"
@@ -231,19 +230,18 @@ export default function TaskTable() {
             ...prev,
             pageIndex: newPageIndex,
           }));
+
+          setParamObject((prev) => ({
+            ...prev,
+            page: newPageIndex,
+          }));
         }
-
-        setParamObject((prev) => ({
-          ...prev,
-          page: newPageIndex,
-        }));
-
         toast.success("Deleted successfully!");
+        setTableIdDelete("");
+        setIsRefreshList(true);
       }
     } catch (error) {
       toast.error("Đã có lỗi xảy ra!");
-    } finally {
-      setTableIdDelete("");
     }
   };
 
@@ -327,7 +325,7 @@ export default function TaskTable() {
             {table.getRowModel().rows.length > 0 && (
               <AutoPagination
                 pageSize={table.getPageCount()}
-                pathname="/manage/tag"
+                pathname="/manage/tasks"
               />
             )}
           </div>

@@ -1,11 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   Pagination,
   PaginationContent,

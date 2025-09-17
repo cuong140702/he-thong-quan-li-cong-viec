@@ -20,16 +20,25 @@ export class UserRepo {
   async list(pagination: GetUsersQueryType): Promise<GetUsersResType> {
     const skip = (pagination.page - 1) * pagination.limit
     const take = pagination.limit
+
     const [totalItems, data] = await Promise.all([
-      this.prismaService.user.count({}),
+      this.prismaService.user.count({
+        where: {
+          deletedAt: null,
+        },
+      }),
       this.prismaService.user.findMany({
         skip,
         take,
+        where: {
+          deletedAt: null,
+        },
         include: {
           role: true,
         },
       }),
     ])
+
     return {
       data,
       totalItems,
@@ -118,5 +127,13 @@ export class UserRepo {
             deletedAt: new Date(),
           },
         })
+  }
+
+  async getUserById(id: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id },
+    })
+    if (!user) return null
+    return user
   }
 }

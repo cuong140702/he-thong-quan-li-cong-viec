@@ -155,11 +155,10 @@ export default function TimeTracking() {
       await timeLogApiRequest.deleteTimelog(tableIdDelete);
 
       toast.success("Deleted successfully!");
+      setTableIdDelete("");
       fetchLogs();
     } catch (error) {
       toast.error("Đã có lỗi xảy ra!");
-    } finally {
-      setTableIdDelete("");
     }
   };
 

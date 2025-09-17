@@ -16,3 +16,19 @@ export interface IGetUserRes {
   lastSeen: string;
   role: IRole;
 }
+
+export interface ICreateUser {
+  email: string;
+  password: string;
+  roleId: string;
+  fullName: string;
+}
+
+export type IUserDetailRes = Pick<
+  IGetUserRes,
+  "roleId" | "email" | "fullName"
+> & {
+  password: string;
+};
+
+export type IUpdateUser = Omit<ICreateUser, "password">;

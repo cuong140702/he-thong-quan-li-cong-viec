@@ -79,6 +79,13 @@ export const RefreshTokenSchema = z.object({
   createdAt: z.date(),
 })
 
+export const GetUserByIdSchema = UserSchema.pick({
+  email: true,
+  fullName: true,
+  roleId: true,
+  password: true,
+})
+
 export const LogoutBodySchema = RefreshTokenBodySchema
 
 export type GetUsersResType = z.infer<typeof GetUsersResSchema>

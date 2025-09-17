@@ -4,6 +4,7 @@ import { ZodSerializerDto } from 'nestjs-zod'
 import {
   CreateUserBodyDTO,
   CreateUserResDTO,
+  GetUserByIdDTO,
   GetUserParamsDTO,
   GetUsersQueryDTO,
   GetUsersResDTO,
@@ -74,6 +75,14 @@ export class UserController {
     return this.userService.updateUser({
       data: body,
       id: String(params.userId),
+    })
+  }
+
+  @Get(':userId')
+  @ZodSerializerDto(GetUserByIdDTO)
+  getUserById(@Param() params: GetUserParamsDTO) {
+    return this.userService.getUserById({
+      id: params.userId,
     })
   }
 

@@ -73,7 +73,6 @@ export const columns: ColumnDef<IGetTagsResponse>[] = [
             setTableIdEdit(row.original.id);
           }}
           onDelete={() => {
-            setIsOpen(true);
             setTableIdDelete(row.original.id);
           }}
           module="tag"
@@ -213,19 +212,18 @@ export default function TagTable() {
             ...prev,
             pageIndex: newPageIndex,
           }));
+
+          setParamObject((prev) => ({
+            ...prev,
+            page: newPageIndex,
+          }));
         }
-
-        setParamObject((prev) => ({
-          ...prev,
-          page: newPageIndex,
-        }));
-
         toast.success("Deleted successfully!");
+        setTableIdDelete("");
+        setIsRefreshList(true);
       }
     } catch (error) {
       toast.error("Đã có lỗi xảy ra!");
-    } finally {
-      setTableIdDelete("");
     }
   };
 

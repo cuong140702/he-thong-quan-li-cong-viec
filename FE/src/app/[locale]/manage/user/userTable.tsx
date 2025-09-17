@@ -41,6 +41,7 @@ import React, {
   useState,
 } from "react";
 import { toast } from "sonner";
+import FormUser from "./formUser";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -92,7 +93,6 @@ export const getColumns = (
             setTableIdEdit(row.original.id);
           }}
           onDelete={() => {
-            setIsOpen(true);
             setTableIdDelete(row.original.id);
           }}
           module="user"
@@ -236,11 +236,11 @@ export default function UserTable() {
         }));
 
         toast.success("Deleted successfully!");
+        setTableIdDelete("");
+        setIsRefreshList(true);
       }
     } catch (error) {
       toast.error("Đã có lỗi xảy ra!");
-    } finally {
-      setTableIdDelete("");
     }
   };
 
@@ -330,6 +330,13 @@ export default function UserTable() {
           </div>
         </div>
       </div>
+
+      <FormUser
+        id={tableIdEdit}
+        setId={setTableIdEdit}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
 
       <DialogDelete
         onConfirm={handleDelete}
