@@ -1,12 +1,18 @@
 import { http } from "@/utils/api";
 import { IListDataResponse, IQueryBase } from "@/utils/interface/common";
-import { IPermissionsRes } from "@/utils/interface/permission";
+import { IBodyPermission, IPermissionsRes } from "@/utils/interface/permission";
 
 const permissionsApiRequest = {
   list: (payload: IQueryBase) =>
     http.get<IListDataResponse<IPermissionsRes[]>>("permission", {
       queryParams: payload,
     }),
+  createPermission: (body: IBodyPermission) => http.post("permission", body),
+  getPermissionById: (id: string) =>
+    http.get<IPermissionsRes>(`permission/${id}`),
+  updatePermission: (id: string, body: IBodyPermission) =>
+    http.put(`permission/${id}`, body),
+  deletePermission: (id: string) => http.delete(`permission/${id}`),
 };
 
 export default permissionsApiRequest;

@@ -8,9 +8,11 @@ export class DashboardRepo {
   constructor(private readonly prisma: PrismaService) {}
 
   async getDashboard(): Promise<TaskDashboardType> {
-    const totalTasks = await this.prisma.task.count()
+    const totalTasks = await this.prisma.task.count({
+      where: { deletedAt: null },
+    })
     const completedTasks = await this.prisma.task.count({
-      where: { status: TaskStatus.completed },
+      where: { status: TaskStatus.completed, deletedAt: null },
     })
 
     // Tính tổng số giờ trong tuần này

@@ -157,6 +157,7 @@ model Permission {
 
   roles Role[] @relation("RolePermissions")
 
+  createdAt   DateTime?   @default(now())
   deletedAt DateTime?
 }
 

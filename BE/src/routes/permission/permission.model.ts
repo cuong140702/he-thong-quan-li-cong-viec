@@ -28,5 +28,30 @@ export const GetPermissionsQuerySchema = z
   })
   .strict()
 
+export const GetPermissionParamsSchema = z
+  .object({
+    permissionId: z.string().uuid(),
+  })
+  .strict()
+
+export const CreatePermissionBodySchema = PermissionSchema.pick({
+  path: true,
+  description: true,
+  method: true,
+  module: true,
+}).strict()
+
+export const GetPermissionByIdResSchema = PermissionSchema.pick({
+  path: true,
+  description: true,
+  method: true,
+  module: true,
+})
+
+export const UpdatePermissionBodySchema = CreatePermissionBodySchema
+
 export type GetPermissionsResType = z.infer<typeof GetPermissionResSchema>
 export type GetPermissionsQueryType = z.infer<typeof GetPermissionsQuerySchema>
+export type CreatePermissionBodyType = z.infer<typeof CreatePermissionBodySchema>
+export type GetPermissionByIdResType = z.infer<typeof GetPermissionByIdResSchema>
+export type UpdatePermissionBodyType = z.infer<typeof UpdatePermissionBodySchema>

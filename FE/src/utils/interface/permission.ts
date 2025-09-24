@@ -17,3 +17,10 @@ export type Permission = {
   method: "GET" | "POST" | "PUT" | "DELETE";
   path: string;
 };
+
+export interface IBodyPermission {
+  module: string;
+  description?: string | null;
+  path: string;
+  method: HTTPMethod;
+}

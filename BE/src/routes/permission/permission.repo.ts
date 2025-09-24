@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/shared/services/prisma.service'
 import { Prisma } from '@prisma/client'
-import { GetPermissionsResType } from './permission.model'
+import {
+  CreatePermissionBodyType,
+  GetPermissionByIdResType,
+  GetPermissionsResType,
+  UpdatePermissionBodyType,
+} from './permission.model'
 
 @Injectable()
 export class PermissionRepo {
@@ -27,6 +32,10 @@ export class PermissionRepo {
         skip,
         take,
         where,
+        orderBy: {
+          //@ts-ignore
+          createdAt: 'desc',
+        },
         include: {
           roles: {
             select: {
@@ -45,5 +54,43 @@ export class PermissionRepo {
       limit,
       totalPages: Math.ceil(totalItems / limit),
     }
+  }
+
+  async createPermission(data: CreatePermissionBodyType) {
+    return await this.prismaService.permission.create({
+      data: {
+        description: data.description ?? null,
+        path: data.path,
+        method: data.method,
+        module: data.module,
+      },
+    })
+  }
+
+  async deletePermission({ id }: { id: string }) {
+    return await this.prismaService.permission.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    })
+  }
+
+  async getPermissionById(id: string): Promise<GetPermissionByIdResType | null> {
+    return this.prismaService.permission.findUnique({
+      where: { id },
+    })
+  }
+
+  async updatePermission(data: UpdatePermissionBodyType, id: string) {
+    return await this.prismaService.permission.update({
+      where: { id },
+      data: {
+        path: data.path,
+        description: data.description ?? null,
+        module: data.module,
+        method: data.method,
+      },
+    })
   }
 }

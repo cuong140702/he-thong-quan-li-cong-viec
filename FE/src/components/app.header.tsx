@@ -8,12 +8,10 @@ import NotificationDropdown from "./notification-component";
 import SwitchLanguage from "./switch-language";
 import DropdownAvatar from "@/app/[locale]/manage/dropdown-avatar";
 import { Link } from "@/i18n/navigation";
-import { useHasMounted } from "./customHook";
 
 export const AppHeader = () => {
   const { toggleSidebar } = useAppContext();
-  const hasMounted = useHasMounted();
-  if (!hasMounted) return null;
+
   return (
     <header className="flex items-center justify-between h-[61px] p-4 border-b bg-muted/40 text-foreground shadow-sm">
       <div className="flex items-center gap-4">

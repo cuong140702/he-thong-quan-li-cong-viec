@@ -26,6 +26,7 @@ import { useAppContext } from "@/components/app-context";
 import RolesSidebar from "./RolesSidebar";
 import RolePermissions from "./RolePermissions";
 import PermissionTable from "./PermissionTable";
+import { Plus } from "lucide-react";
 
 type TableContextType = {
   tableIdEdit: string;
@@ -36,6 +37,15 @@ type TableContextType = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   isRefreshList: boolean;
   setIsRefreshList: Dispatch<SetStateAction<boolean>>;
+
+  tblEditPermId: string;
+  setTblEditPermId: Dispatch<SetStateAction<string>>;
+  tblDeletePermId: string;
+  setTblDeletePermId: Dispatch<SetStateAction<string>>;
+  isOpenPerm: boolean;
+  setIsOpenPerm: Dispatch<SetStateAction<boolean>>;
+  isRefreshListPerm: boolean;
+  setIsRefreshListPerm: Dispatch<SetStateAction<boolean>>;
 };
 
 export const TableContext = createContext<TableContextType>({
@@ -47,6 +57,15 @@ export const TableContext = createContext<TableContextType>({
   setIsOpen: () => {},
   isRefreshList: false,
   setIsRefreshList: () => {},
+
+  tblEditPermId: "",
+  setTblEditPermId: () => {},
+  tblDeletePermId: "",
+  setTblDeletePermId: () => {},
+  isOpenPerm: false,
+  setIsOpenPerm: () => {},
+  isRefreshListPerm: false,
+  setIsRefreshListPerm: () => {},
 });
 
 export default function RolePermissionPage() {
@@ -60,6 +79,11 @@ export default function RolePermissionPage() {
   const [tableIdDelete, setTableIdDelete] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isRefreshList, setIsRefreshList] = useState<boolean>(false);
+
+  const [tblEditPermId, setTblEditPermId] = useState<string>("");
+  const [tblDeletePermId, setTblDeletePermId] = useState<string>("");
+  const [isOpenPerm, setIsOpenPerm] = useState<boolean>(false);
+  const [isRefreshListPerm, setIsRefreshListPerm] = useState<boolean>(false);
 
   const [dataRole, setDataRole] = useState<IRolesRes[]>([]);
   const [dataPermission, setDataPermission] = useState<IPermissionsRes[]>([]);
@@ -78,6 +102,13 @@ export default function RolePermissionPage() {
       setIsRefreshList(false);
     }
   }, [isRefreshList]);
+
+  useEffect(() => {
+    if (isRefreshListPerm) {
+      handleGetAllPermissions({ page: 1, limit: 1000 });
+      setIsRefreshListPerm(false);
+    }
+  }, [isRefreshListPerm]);
 
   useEffect(() => {
     if (roleId && dataRole.length > 0) {
@@ -107,6 +138,8 @@ export default function RolePermissionPage() {
     try {
       loadingContext?.show();
       const res = await permissionsApiRequest.list(payload);
+      console.log(res?.data?.data);
+
       setDataPermission(res?.data?.data ?? []);
     } catch {
       toast.error("Lỗi khi tải danh sách permissions!");
@@ -126,6 +159,15 @@ export default function RolePermissionPage() {
         setIsOpen,
         isRefreshList,
         setIsRefreshList,
+
+        tblEditPermId,
+        setTblEditPermId,
+        tblDeletePermId,
+        setTblDeletePermId,
+        isOpenPerm,
+        setIsOpenPerm,
+        isRefreshListPerm,
+        setIsRefreshListPerm,
       }}
     >
       <div className="p-6 space-y-6">
@@ -162,8 +204,9 @@ export default function RolePermissionPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-64"
               />
-              <Button className="bg-[#04A7EB] hover:bg-muted/50">
-                + Add Permission
+              <Button onClick={() => setIsOpenPerm(true)}>
+                <Plus className="w-4 h-4" />
+                Add New
               </Button>
             </div>
             <div className="rounded-md border">

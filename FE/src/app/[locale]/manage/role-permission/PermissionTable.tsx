@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -11,7 +11,6 @@ import {
 } from "@tanstack/react-table";
 import { IPermissionsRes } from "@/utils/interface/permission";
 import { methodColors } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -20,6 +19,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import FormPermission from "./formPermission";
+import { TableContext } from "./role-permission";
+import TableAction from "@/components/TableAction";
+import DialogDelete from "@/components/ModalDelete";
+import { toast } from "sonner";
+import permissionsApiRequest from "@/apiRequests/permission";
 
 interface PermissionTableProps {
   data: IPermissionsRes[];
@@ -30,6 +35,15 @@ export default function PermissionTable({
   data,
   search,
 }: PermissionTableProps) {
+  const {
+    isOpenPerm,
+    setIsOpenPerm,
+    tblEditPermId,
+    setTblEditPermId,
+    tblDeletePermId,
+    setTblDeletePermId,
+    setIsRefreshListPerm,
+  } = useContext(TableContext);
   const [sorting, setSorting] = useState<SortingState>([]);
 
   // Filter theo search
@@ -69,15 +83,21 @@ export default function PermissionTable({
       {
         accessorKey: "id",
         header: "Actions",
-        cell: () => (
-          <Button
-            size="sm"
-            variant="outline"
-            className="hover:bg-[#04A7EB] hover:text-white"
-          >
-            Edit
-          </Button>
-        ),
+        cell: ({ row }) => {
+          return (
+            <TableAction
+              data={row}
+              onEdit={() => {
+                setIsOpenPerm(true);
+                setTblEditPermId(row.original.id);
+              }}
+              onDelete={() => {
+                setTblDeletePermId(row.original.id);
+              }}
+              module="project"
+            />
+          );
+        },
       },
     ],
     []
@@ -92,6 +112,22 @@ export default function PermissionTable({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  const handleDelete = async () => {
+    if (!tblDeletePermId) return;
+
+    try {
+      const res = await permissionsApiRequest.deletePermission(tblDeletePermId);
+
+      if (res.statusCode === 200) {
+        toast.success("Deleted successfully!");
+        setTblDeletePermId("");
+        setIsRefreshListPerm(true);
+      }
+    } catch (error) {
+      toast.error("Đã có lỗi xảy ra!");
+    }
+  };
 
   return (
     <>
@@ -136,6 +172,19 @@ export default function PermissionTable({
           )}
         </TableBody>
       </Table>
+
+      <FormPermission
+        id={tblEditPermId}
+        setId={setTblEditPermId}
+        isOpen={isOpenPerm}
+        onClose={() => setIsOpenPerm(false)}
+      />
+
+      <DialogDelete
+        onConfirm={handleDelete}
+        tableIdDelete={tblDeletePermId}
+        setTableIdDelete={setTblDeletePermId}
+      />
     </>
   );
 }
