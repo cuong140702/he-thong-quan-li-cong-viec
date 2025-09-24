@@ -59,6 +59,7 @@ const FormRole = ({ id, setId, isOpen, onClose }: Props) => {
   const loadingContext = useContext(LoadingData);
   const { setIsRefreshList } = useContext(TableContext);
   const errorMessageT = useTranslations("ErrorMessage");
+  const tCommon = useTranslations("Common");
 
   const [dataPermission, setDataPermission] = useState<IPermissionsRes[]>([]);
 
@@ -283,7 +284,7 @@ const FormRole = ({ id, setId, isOpen, onClose }: Props) => {
             className="cursor-pointer"
             disabled={id ? !form.formState.isDirty : false}
           >
-            Save
+            {tCommon("save")}
           </Button>
         </DialogFooter>
       </DialogContent>

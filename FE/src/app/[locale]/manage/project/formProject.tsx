@@ -53,6 +53,7 @@ const schema = z.object({
 });
 
 const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
+  const tCommon = useTranslations("Common");
   const form = useForm<IBodyProject>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -290,7 +291,7 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
             className="cursor-pointer"
             disabled={id ? !form.formState.isDirty : false}
           >
-            Save
+            {tCommon("save")}
           </Button>
         </DialogFooter>
       </DialogContent>

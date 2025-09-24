@@ -82,6 +82,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
 
   const loadingContext = useContext(LoadingData);
   const errorMessageT = useTranslations("ErrorMessage");
+  const tCommon = useTranslations("Common");
 
   const [dataProject, setDataProject] = useState<IGetProjectsResponse[]>([]);
   const [dataTag, setDataTag] = useState<IGetTagsResponse[]>([]);
@@ -396,7 +397,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
             className="cursor-pointer"
             disabled={id ? !form.formState.isDirty : false}
           >
-            Save
+            {tCommon("save")}
           </Button>
         </DialogFooter>
       </DialogContent>

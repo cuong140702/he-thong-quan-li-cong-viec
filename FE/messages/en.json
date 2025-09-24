@@ -1,4 +1,9 @@
 {
+  "Common": {
+    "cancel": "Cancel",
+    "saveChanges": "Save changes",
+    "save": "Save"
+  },
   "ErrorMessage": {
     "invalidEmail": "Invalid email",
     "required": "This field is required",
@@ -32,5 +37,26 @@
     "fullName": "Full Name",
     "email": "Email",
     "role": "Role"
+  },
+  "Profile": {
+    "title": "Profile",
+    "desc": "Update your avatar and personal information",
+    "name": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "roleName": "Role Name",
+    "bio": "Bio",
+    "avatarHint": "JPG, PNG, GIF. Max 2MB",
+    "changeAvatar": "Change Avatar",
+    "cancel": "Cancel",
+    "save": "Save Changes"
+  },
+  "Security": {
+    "title": "Security",
+    "desc": "Change your login password to protect your account",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updatePassword": "Update Password"
   }
 }

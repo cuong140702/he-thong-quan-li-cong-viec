@@ -69,6 +69,7 @@ const FormUser = ({ id, setId, isOpen, onClose }: Props) => {
   const loadingContext = useContext(LoadingData);
 
   const errorMessageT = useTranslations("ErrorMessage");
+  const tCommon = useTranslations("Common");
 
   const [dataRoles, setDataRoles] = useState<IRolesRes[]>([]);
 
@@ -303,7 +304,7 @@ const FormUser = ({ id, setId, isOpen, onClose }: Props) => {
             className="cursor-pointer"
             disabled={id ? !form.formState.isDirty : false}
           >
-            Save
+            {tCommon("save")}
           </Button>
         </DialogFooter>
       </DialogContent>

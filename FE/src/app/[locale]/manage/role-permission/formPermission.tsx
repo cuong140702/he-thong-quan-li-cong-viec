@@ -49,6 +49,7 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
   const { setIsRefreshListPerm } = useContext(TableContext);
   const loadingContext = useContext(LoadingData);
   const errorMessageT = useTranslations("ErrorMessage");
+  const tCommon = useTranslations("Common");
 
   const form = useForm<IBodyPermission>({
     resolver: zodResolver(schema),
@@ -284,7 +285,7 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
             className="cursor-pointer"
             disabled={id ? !form.formState.isDirty : false}
           >
-            Save
+            {tCommon("save")}
           </Button>
         </DialogFooter>
       </DialogContent>

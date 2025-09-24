@@ -1,4 +1,9 @@
 {
+  "Common": {
+    "cancel": "Hủy",
+    "saveChanges": "Lưu thay đổi",
+    "save": "Lưu"
+  },
   "ErrorMessage": {
     "invalidEmail": "Email không hợp lệ",
     "required": "Trường này không được để trống",
@@ -32,5 +37,26 @@
     "fullName": "Họ và tên",
     "email": "Email",
     "role": "Vai trò"
+  },
+  "Profile": {
+    "title": "Hồ sơ cá nhân",
+    "desc": "Cập nhật avatar và thông tin cá nhân của bạn",
+    "name": "Họ tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "roleName": "Tên vai trò",
+    "bio": "Giới thiệu",
+    "avatarHint": "JPG, PNG, GIF. Tối đa 2MB",
+    "changeAvatar": "Đổi Avatar",
+    "cancel": "Hủy",
+    "save": "Lưu thay đổi"
+  },
+  "Security": {
+    "title": "Bảo mật",
+    "desc": "Đổi mật khẩu đăng nhập để bảo vệ tài khoản",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu mới",
+    "updatePassword": "Cập nhật mật khẩu"
   }
 }
