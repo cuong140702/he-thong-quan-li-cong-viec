@@ -48,6 +48,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { formatDate, toDateSafe } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type Props = {
   isOpen: boolean;
@@ -57,9 +58,9 @@ type Props = {
 };
 
 const schema = z.object({
-  title: z.string().trim().min(1, "This field is required"),
+  title: z.string().min(1, { message: "required" }),
   description: z.string().optional().nullable(),
-  status: z.enum(TaskStatus),
+  status: z.enum(TaskStatus, { message: "required" }),
   deadline: z.date(),
   projectId: z.string().optional().nullable(),
   tags: z.array(z.string()),
@@ -80,6 +81,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
   const { setIsRefreshList } = useContext(TableContext);
 
   const loadingContext = useContext(LoadingData);
+  const errorMessageT = useTranslations("ErrorMessage");
 
   const [dataProject, setDataProject] = useState<IGetProjectsResponse[]>([]);
   const [dataTag, setDataTag] = useState<IGetTagsResponse[]>([]);
@@ -251,13 +253,16 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
               <FormField
                 control={form.control}
                 name="title"
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <Label>
                       Title <span className="text-red-500">*</span>
                     </Label>
                     <Input type="text" {...field} />
-                    <FormMessage />
+                    <FormMessage>
+                      {Boolean(errors.title?.message) &&
+                        errorMessageT(errors.title?.message as any)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
@@ -278,7 +283,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
               <FormField
                 control={form.control}
                 name="status"
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <Label>
                       Status <span className="text-red-500">*</span>
@@ -296,7 +301,10 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                         <SelectItem value="completed">Completed</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage>
+                      {Boolean(errors.status?.message) &&
+                        errorMessageT(errors.status?.message as any)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />

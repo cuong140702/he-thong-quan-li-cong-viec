@@ -29,6 +29,7 @@ import {
 import permissionsApiRequest from "@/apiRequests/permission";
 import { toast } from "sonner";
 import { TableContext } from "./role-permission";
+import { useTranslations } from "next-intl";
 
 type Props = {
   isOpen: boolean;
@@ -38,15 +39,16 @@ type Props = {
 };
 
 const schema = z.object({
-  module: z.string().trim().min(1, "This field is required"),
+  module: z.string().min(1, { message: "required" }),
   description: z.string().nullable().optional(),
-  path: z.string().trim().min(1, "This field is required"),
+  path: z.string().min(1, { message: "required" }),
   method: z.enum(HTTPMethod),
 });
 
 const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
   const { setIsRefreshListPerm } = useContext(TableContext);
   const loadingContext = useContext(LoadingData);
+  const errorMessageT = useTranslations("ErrorMessage");
 
   const form = useForm<IBodyPermission>({
     resolver: zodResolver(schema),
@@ -182,7 +184,7 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
               <FormField
                 control={form.control}
                 name="module"
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <div className="flex flex-col gap-2">
                       <Label>
@@ -190,7 +192,10 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
                       </Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Input type="text" className="w-full" {...field} />
-                        <FormMessage />
+                        <FormMessage>
+                          {Boolean(errors.module?.message) &&
+                            errorMessageT(errors.module?.message as any)}
+                        </FormMessage>
                       </div>
                     </div>
                   </FormItem>
@@ -219,7 +224,7 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
               <FormField
                 control={form.control}
                 name="path"
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <div className="flex flex-col gap-2">
                       <Label>
@@ -227,7 +232,10 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
                       </Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Input type="text" className="w-full" {...field} />
-                        <FormMessage />
+                        <FormMessage>
+                          {Boolean(errors.path?.message) &&
+                            errorMessageT(errors.path?.message as any)}
+                        </FormMessage>
                       </div>
                     </div>
                   </FormItem>
@@ -237,7 +245,7 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
               <FormField
                 control={form.control}
                 name="method"
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <div className="flex flex-col gap-2">
                       <Label>
@@ -258,7 +266,10 @@ const FormPermission = ({ id, setId, isOpen, onClose }: Props) => {
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage>
+                        {Boolean(errors.method?.message) &&
+                          errorMessageT(errors.method?.message as any)}
+                      </FormMessage>
                     </div>
                   </FormItem>
                 )}

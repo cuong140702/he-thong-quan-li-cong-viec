@@ -31,6 +31,7 @@ import { BaseSelect } from "@/components/BaseSelect";
 import { IPermissionsRes } from "@/utils/interface/permission";
 import permissionsApiRequest from "@/apiRequests/permission";
 import { TableContext } from "./role-permission";
+import { useTranslations } from "next-intl";
 
 type Props = {
   isOpen: boolean;
@@ -40,7 +41,7 @@ type Props = {
 };
 
 const schema = z.object({
-  name: z.string().trim().min(1, "This field is required"),
+  name: z.string().min(1, { message: "required" }),
   description: z.string().nullable(),
   permissions: z.array(z.string()),
 });
@@ -57,6 +58,7 @@ const FormRole = ({ id, setId, isOpen, onClose }: Props) => {
 
   const loadingContext = useContext(LoadingData);
   const { setIsRefreshList } = useContext(TableContext);
+  const errorMessageT = useTranslations("ErrorMessage");
 
   const [dataPermission, setDataPermission] = useState<IPermissionsRes[]>([]);
 
@@ -207,7 +209,7 @@ const FormRole = ({ id, setId, isOpen, onClose }: Props) => {
               <FormField
                 control={form.control}
                 name="name"
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <div className="flex flex-col gap-2">
                       <Label>
@@ -215,7 +217,10 @@ const FormRole = ({ id, setId, isOpen, onClose }: Props) => {
                       </Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Input type="text" className="w-full" {...field} />
-                        <FormMessage />
+                        <FormMessage>
+                          {Boolean(errors.name?.message) &&
+                            errorMessageT(errors.name?.message as any)}
+                        </FormMessage>
                       </div>
                     </div>
                   </FormItem>

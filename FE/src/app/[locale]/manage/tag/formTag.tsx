@@ -20,6 +20,7 @@ import {
 import { TableContext } from "./tagTable";
 import { IBodyTag } from "@/utils/interface/tag";
 import tagApiRequest from "@/apiRequests/tag";
+import { useTranslations } from "next-intl";
 
 type Props = {
   isOpen: boolean;
@@ -29,7 +30,7 @@ type Props = {
 };
 
 const schema = z.object({
-  name: z.string().trim().min(1, "This field is required"),
+  name: z.string().min(1, { message: "required" }),
 });
 
 const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
@@ -42,6 +43,7 @@ const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
   const { setIsRefreshList } = useContext(TableContext);
 
   const loadingContext = useContext(LoadingData);
+  const errorMessageT = useTranslations("ErrorMessage");
 
   useEffect(() => {
     if (!id) {
@@ -153,7 +155,7 @@ const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
               <FormField
                 control={form.control}
                 name="name"
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <div className="flex flex-col gap-2">
                       <Label>
@@ -161,7 +163,10 @@ const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
                       </Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Input type="text" className="w-full" {...field} />
-                        <FormMessage />
+                        <FormMessage>
+                          {Boolean(errors.name?.message) &&
+                            errorMessageT(errors.name?.message as any)}
+                        </FormMessage>
                       </div>
                     </div>
                   </FormItem>
