@@ -10,3 +10,7 @@ export interface IListDataResponse<T> {
   totalItems: number;
   totalPages: number;
 }
+
+export interface IUploadFileRes {
+  url: string;
+}

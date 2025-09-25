@@ -5,6 +5,7 @@ import {
   GetUsersResType,
   RefreshTokenBodyType,
   RefreshTokenType,
+  UpdateProfileResType,
   UpdateUserBodyType,
 } from 'src/routes/user/user.model'
 import { RoleType } from 'src/shared/models/shared-role.model'
@@ -95,12 +96,16 @@ export class UserRepo {
     })
   }
 
-  updateUser(where: { id: string }, data: Partial<UserType>): Promise<UserType | null> {
+  async updateUser(where: { id: string }, data: Omit<UpdateUserBodyType, 'refreshToken'>) {
+    const { roleId, ...rest } = data
+
     return this.prismaService.user.update({
-      where: {
-        ...where,
+      where,
+      data: {
+        ...rest,
+        ...(roleId ? { role: { connect: { id: roleId } } } : {}),
       },
-      data,
+      include: { role: true },
     })
   }
 

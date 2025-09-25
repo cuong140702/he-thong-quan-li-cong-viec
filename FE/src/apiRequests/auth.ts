@@ -59,6 +59,8 @@ const authApiRequest = {
       }
     ),
   logout: () => http.post("/api/user/logout", null, { baseUrl: "" }),
+  setTokenToCookie: (body: { accessToken: string; refreshToken: string }) =>
+    http.post("/api/user/token", body, { baseUrl: "" }),
 };
 
 export default authApiRequest;

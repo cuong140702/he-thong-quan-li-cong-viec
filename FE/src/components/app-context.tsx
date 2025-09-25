@@ -18,6 +18,7 @@ import {
 import { generateMultipleSocketInstances, Sockets } from "@/lib/socket";
 import { IPermissionsRes, Permission } from "@/utils/interface/permission";
 import roleApiRequest from "@/apiRequests/role";
+import { TokenPayload } from "@/utils/interface/auth";
 
 export type ContextType = {
   isSidebarOpen: boolean;
@@ -35,8 +36,8 @@ export type ContextType = {
     method: Permission["method"],
     path: string
   ) => boolean;
-  userId: string;
-  setUserId: (userId: string) => void;
+  dataUser: TokenPayload | null;
+  setDataUser: (user: TokenPayload | null) => void;
 };
 
 const AppContext = createContext<ContextType | undefined>(undefined);
@@ -50,7 +51,7 @@ export const AppContextProvider = ({
   const [role, setRoleState] = useState<string | undefined>();
   const [sockets, setSocketsState] = useState<Sockets | null>(null);
   const [permissions, setPermissions] = useState<IPermissionsRes[]>([]);
-  const [userId, setUserId] = useState<string>("");
+  const [dataUser, setDataUser] = useState<TokenPayload | null>(null);
 
   const count = useRef(0);
 
@@ -61,7 +62,7 @@ export const AppContextProvider = ({
         const decoded = decodeToken(accessToken);
         if (!decoded) return;
         setRoleState(decoded.roleName);
-        setUserId(decoded.userId.toString());
+        setDataUser(decoded);
         roleApiRequest.getRolePermissions(decoded.roleId).then((perms) => {
           setPermissions(perms.data?.permissions || []);
         });
@@ -115,8 +116,8 @@ export const AppContextProvider = ({
         permissions,
         setPermissions,
         can,
-        userId,
-        setUserId,
+        dataUser,
+        setDataUser,
       }}
     >
       {children}

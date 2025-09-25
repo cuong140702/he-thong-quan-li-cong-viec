@@ -143,28 +143,53 @@ export class UserService {
   }
 
   async updateUser({ data, id }: { data: UpdateUserBodyType; id: string }) {
-    const user = await this.userRepo.findUniqueUserIncludeRole({
-      id,
-    })
-    if (!user) {
-      throw new Error('Không tìm thấy người dùng với ID đã cung cấp.')
-    }
+    const user = await this.userRepo.findUniqueUserIncludeRole({ id })
+    if (!user) throw new Error('Không tìm thấy người dùng với ID đã cung cấp.')
 
     if (data.email && data.email !== user.email) {
-      const existingUser = await this.userRepo.findUniqueUserIncludeRole({
-        email: data.email,
-      })
-      if (existingUser) {
-        throw new Error('Email đã được sử dụng.')
-      }
+      const existingUser = await this.userRepo.findUniqueUserIncludeRole({ email: data.email })
+      if (existingUser) throw new Error('Email đã được sử dụng.')
     }
 
-    return await this.userRepo.updateUser(
-      { id },
-      {
-        ...data,
+    // check refreshToken có tồn tại không
+    const refreshTokenInDb = await this.userRepo.findUniqueRefreshTokenIncludeUserRole({
+      refreshToken: data.refreshToken,
+    })
+
+    if (!refreshTokenInDb) {
+      throw new Error('Refresh token này không hợp lệ hoặc đã bị thu hồi.')
+    }
+
+    // update user info
+    const { refreshToken, ...userUpdateData } = data
+    const updatedUser = await this.userRepo.updateUser({ id }, userUpdateData)
+
+    // xóa refreshToken cũ
+    const $deleteRefreshToken = this.userRepo.deleteRefreshToken({ refreshToken })
+
+    // tạo token mới
+    const $tokens = this.generateTokens({
+      userId: updatedUser.id,
+      email: updatedUser.email,
+      fullName: updatedUser.fullName,
+      roleId: updatedUser.roleId,
+      roleName: updatedUser.role.name,
+    })
+
+    const [, tokens] = await Promise.all([$deleteRefreshToken, $tokens])
+
+    return {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      fullName: updatedUser.fullName,
+      roleId: updatedUser.roleId,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      role: {
+        id: updatedUser.role.id,
+        name: updatedUser.role.name,
       },
-    )
+    }
   }
 
   async deleteUser({ id }: { id: string }) {

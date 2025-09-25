@@ -10,7 +10,7 @@ export const UserSchema = z.object({
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
   isOnline: z.boolean(),
-  avatarUrl: z.string().url().nullable().optional(),
+  avatarUrl: z.string().nullable().optional(),
   lastSeen: z.date().nullable(),
 })
 

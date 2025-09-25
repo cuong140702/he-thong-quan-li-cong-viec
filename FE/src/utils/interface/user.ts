@@ -22,6 +22,7 @@ export interface ICreateUser {
   password: string;
   roleId: string;
   fullName: string;
+  avatarUrl?: string;
 }
 
 export type IUserDetailRes = Pick<
@@ -31,4 +32,6 @@ export type IUserDetailRes = Pick<
   password: string;
 };
 
-export type IUpdateUser = Omit<ICreateUser, "password">;
+export type IUpdateUser = Omit<ICreateUser, "password"> & {
+  refreshToken?: string; // optional
+};

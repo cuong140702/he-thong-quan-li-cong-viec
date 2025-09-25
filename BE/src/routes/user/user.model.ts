@@ -39,13 +39,30 @@ export const CreateUserBodySchema = UserSchema.pick({
 
 export const UpdateProfileResSchema = UserSchema.omit({
   password: true,
+  deletedAt: true,
+  createdAt: true,
+  updatedAt: true,
+  isOnline: true,
+  lastSeen: true,
+}).extend({
+  accessToken: z.string(),
+  refreshToken: z.string(),
+  role: RoleSchema.pick({
+    id: true,
+    name: true,
+  }),
 })
 
 export const UpdateUserBodySchema = UserSchema.pick({
   fullName: true,
   email: true,
   roleId: true,
-}).strict()
+  avatarUrl: true,
+})
+  .extend({
+    refreshToken: z.string(),
+  })
+  .strict()
 
 export const LoginBodySchema = UserSchema.pick({
   email: true,
@@ -97,3 +114,4 @@ export type UpdateUserBodyType = z.infer<typeof UpdateUserBodySchema>
 export type LoginBodyType = z.infer<typeof LoginBodySchema>
 export type RefreshTokenBodyType = z.infer<typeof RefreshTokenBodySchema>
 export type LoginResType = z.infer<typeof LoginResSchema>
+export type UpdateProfileResType = z.infer<typeof UpdateProfileResSchema>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,112 +9,255 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
 import { useTranslations } from "next-intl";
-
-type FormValues = {
-  fullName: string;
-  email: string;
-  phone: string;
-  bio?: string;
-  roleName: string;
-  notifications: boolean;
-  marketing: boolean;
-  currentPassword?: string;
-  newPassword?: string;
-  confirmPassword?: string;
-};
+import mediaApiRequest from "@/apiRequests/media";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import userApiRequest from "@/apiRequests/user";
+import { useAppContext } from "@/components/app-context";
+import { IUpdateUser } from "@/utils/interface/user";
+import { IQueryBase } from "@/utils/interface/common";
+import { LoadingData } from "@/components/LoadingData";
+import roleApiRequest from "@/apiRequests/role";
+import { IRolesRes } from "@/utils/interface/role";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { TokenPayload } from "@/utils/interface/auth";
+import {
+  getRefreshTokenFromLocalStorage,
+  setAccessTokenToLocalStorage,
+  setRefreshTokenToLocalStorage,
+} from "@/lib/utils";
+import authApiRequest from "@/apiRequests/auth";
 
 export default function SettingsPage() {
+  const loadingContext = useContext(LoadingData);
   const tProfile = useTranslations("Profile");
   const tSecurity = useTranslations("Security");
   const tCommon = useTranslations("Common");
-  const { register, handleSubmit } = useForm<FormValues>({
+  const { dataUser, setDataUser } = useAppContext();
+
+  const form = useForm<IUpdateUser>({
     defaultValues: {
-      fullName: "Nguyễn Văn Cường",
-      email: "cuong@gmail.com",
-      phone: "0123456789",
-      roleName: "",
-      bio: "Front-end developer đam mê UX/UI ✨",
-      notifications: true,
-      marketing: false,
+      email: "",
+      fullName: "",
+      roleId: "",
+      avatarUrl: "",
     },
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [saving, setSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
+  const [dataRoles, setDataRoles] = useState<IRolesRes[]>([]);
 
-  const onSubmit = async (data: FormValues) => {
-    setSaving(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    console.log("Saved", data);
-    setSaving(false);
+  useEffect(() => {
+    getListRoles({ page: 1, limit: 1000 });
+  }, []);
+
+  useEffect(() => {
+    if (dataUser && dataRoles.length > 0) {
+      form.reset({
+        fullName: dataUser.fullName,
+        email: dataUser.email,
+        roleId: dataUser.roleId,
+      });
+    }
+  }, [dataUser, form, dataRoles]);
+
+  const onSubmit = async (data: IUpdateUser) => {
+    const refreshToken = getRefreshTokenFromLocalStorage();
+    let avatarUrl = avatarPreview;
+
+    if (avatarFile) {
+      const res = await mediaApiRequest.uploadFiles([avatarFile]);
+      avatarUrl = res?.data?.[0]?.url ?? avatarPreview;
+    }
+
+    if (!dataUser?.userId) return;
+    const res = await userApiRequest.updateUser(dataUser?.userId, {
+      ...data,
+      avatarUrl,
+      refreshToken: refreshToken || "",
+    });
+    const { id, ...rest } = res?.data as TokenPayload & {
+      id: string;
+      accessToken: string;
+      refreshToken: string;
+    };
+    const dataUpdateUser: Omit<TokenPayload, "userId"> & {
+      id: string;
+      accessToken: string;
+      refreshToken: string;
+    } = {
+      ...rest,
+      id,
+    };
+    const updatedUser = {
+      ...dataUpdateUser,
+      userId: dataUpdateUser.id,
+      accessToken: dataUpdateUser.accessToken,
+      refreshToken: dataUpdateUser.refreshToken,
+    };
+
+    setDataUser(updatedUser);
+    setAccessTokenToLocalStorage(updatedUser.accessToken);
+    setRefreshTokenToLocalStorage(updatedUser.refreshToken);
+    await authApiRequest.setTokenToCookie({
+      accessToken: updatedUser.accessToken,
+      refreshToken: updatedUser.refreshToken,
+    });
+  };
+
+  const getListRoles = async (payload: IQueryBase) => {
+    try {
+      loadingContext?.show();
+      const res = await roleApiRequest.list(payload);
+      if (!res) return;
+
+      const responseData = res.data;
+      setDataRoles(responseData?.data ?? []);
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách!");
+    } finally {
+      loadingContext?.hide();
+    }
   };
 
   return (
     <div className="max-w-5xl mx-auto p-8 space-y-8">
       {/* Hồ sơ cá nhân */}
-      <Card className="shadow-md border rounded-2xl">
-        <CardHeader>
-          <CardTitle>{tProfile("title")}</CardTitle>
-          <CardDescription>{tProfile("desc")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Avatar */}
-            <div className="flex flex-col items-center gap-3">
-              <Avatar className="w-28 h-28 border">
-                <AvatarImage src="/avatar.png" alt="Avatar" />
-                <AvatarFallback>NV</AvatarFallback>
-              </Avatar>
-              <Button variant="secondary" size="sm">
-                {tProfile("changeAvatar")}
-              </Button>
-              <p className="text-xs text-muted-foreground text-center">
-                {tProfile("avatarHint")}
-              </p>
-            </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Card className="shadow-md border rounded-2xl">
+            <CardHeader>
+              <CardTitle>{tProfile("title")}</CardTitle>
+              <CardDescription>{tProfile("desc")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Avatar */}
+                <div className="flex flex-col items-center gap-3">
+                  <Avatar className="w-28 h-28 border">
+                    <AvatarImage src={avatarPreview} alt="Avatar" />
+                    <AvatarFallback>NV</AvatarFallback>
+                  </Avatar>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {tProfile("changeAvatar")}
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
 
-            {/* Form thông tin */}
-            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label className="mb-1 block">{tProfile("name")}</Label>
-                <Input {...register("fullName")} />
-              </div>
-              <div>
-                <Label className="mb-1 block">{tProfile("email")}</Label>
-                <Input type="email" {...register("email")} />
-              </div>
-              <div>
-                <Label className="mb-1 block">{tProfile("phone")}</Label>
-                <Input {...register("phone")} />
-              </div>
-              <div>
-                <Label className="mb-1 block">{tProfile("roleName")}</Label>
-                <Input {...register("roleName")} />
-              </div>
-              <div className="md:col-span-2">
-                <Label className="mb-1 block">Giới thiệu</Label>
-                <Textarea {...register("bio")} className="min-h-[90px]" />
-              </div>
-            </div>
-          </div>
+                      if (file) {
+                        setAvatarFile(file);
+                        setAvatarPreview(URL.createObjectURL(file));
+                      }
+                    }}
+                  />
+                  <p className="text-xs text-muted-foreground text-center">
+                    {tProfile("avatarHint")}
+                  </p>
+                </div>
 
-          {/* Footer buttons */}
-          <div className="flex justify-end gap-3 mt-8">
-            <Button variant="ghost" type="button">
-              {tCommon("cancel")}
-            </Button>
-            <Button type="submit">{tCommon("saveChanges")}</Button>
-          </div>
-        </CardContent>
-      </Card>
+                {/* Form fields */}
+                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{tProfile("name")}</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{tProfile("email")}</FormLabel>
+                        <FormControl>
+                          <Input type="email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="roleId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Role Name</FormLabel>
+                        <Select
+                          value={field.value ?? ""}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {dataRoles.map((role) => (
+                              <SelectItem key={role.id} value={role.id}>
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
+              {/* Footer */}
+              <div className="flex justify-end gap-3 mt-8">
+                <Button variant="ghost" type="button">
+                  {tCommon("cancel")}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={dataUser?.userId ? !form.formState.isDirty : false}
+                >
+                  {tCommon("saveChanges")}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </form>
+      </Form>
       {/* Bảo mật */}
-      <Card className="shadow-md border rounded-2xl">
+      {/* <Card className="shadow-md border rounded-2xl">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">{tSecurity("title")}</CardTitle>
           <CardDescription className="text-sm">
@@ -161,7 +304,7 @@ export default function SettingsPage() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

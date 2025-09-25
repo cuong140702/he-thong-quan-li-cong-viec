@@ -15,7 +15,7 @@ import { Sockets } from "@/lib/socket";
 
 const NotificationDropdown = () => {
   const loadingContext = useContext(LoadingData);
-  const { sockets, userId } = useAppContext();
+  const { sockets } = useAppContext();
   const { messages: message } = (sockets || {}) as Sockets;
   const [dataNotifications, setDataNotifications] = useState<
     INotificationRes[]
