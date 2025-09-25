@@ -58,5 +58,23 @@
     "newPassword": "New Password",
     "confirmPassword": "Confirm New Password",
     "updatePassword": "Update Password"
+  },
+  "ManageProject": {
+    "name": "Name",
+    "description": "Description",
+    "user": "User"
+  },
+  "ManageTask": {
+    "stt": "STT",
+    "title": "Title",
+    "description": "Description",
+    "status": "Status",
+    "deadline": "Deadline",
+    "project": "Project",
+    "tags": "Tags"
+  },
+  "ManageTag": {
+    "stt": "STT",
+    "name": "Name"
   }
 }

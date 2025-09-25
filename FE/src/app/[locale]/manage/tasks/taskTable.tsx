@@ -35,6 +35,7 @@ import taskApiRequest from "@/apiRequests/task";
 import FormTask from "./formTask";
 import TableAction from "@/components/TableAction";
 import { formatDate, ShowIfCan } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -47,36 +48,38 @@ export const TableContext = createContext({
   setIsRefreshList: (_: boolean) => {},
 });
 
-export const columns: ColumnDef<ITaskRes>[] = [
+export const getColumns = (
+  t: (key: string) => string
+): ColumnDef<ITaskRes>[] => [
   {
     id: "stt",
-    header: "STT",
+    header: t("stt"), // ví dụ key: "stt": "STT"
     cell: ({ row }) => row.index + 1,
   },
   {
     accessorKey: "title",
-    header: "Title",
+    header: t("title"),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("title")}</div>
     ),
   },
   {
     accessorKey: "description",
-    header: "Description",
+    header: t("description"),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("description")}</div>
     ),
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: t("status"),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("status")}</div>
     ),
   },
   {
     accessorKey: "deadline",
-    header: "Deadline",
+    header: t("deadline"),
     cell: ({ row }) => {
       const value = row.getValue("deadline");
       return <div className="capitalize">{formatDate(value as string)}</div>;
@@ -88,7 +91,6 @@ export const columns: ColumnDef<ITaskRes>[] = [
     cell: ({ row }) => {
       const { setTableIdEdit, setTableIdDelete, setIsOpen } =
         useContext(TableContext);
-
       return (
         <TableAction
           data={row}
@@ -108,6 +110,8 @@ export const columns: ColumnDef<ITaskRes>[] = [
 
 export default function TaskTable() {
   const loadingContext = useContext(LoadingData);
+  const t = useTranslations("ManageTask");
+  const columns = getColumns(t);
   const searchParams = useSearchParams();
   const router = useRouter();
   const pageFromParams = useMemo(

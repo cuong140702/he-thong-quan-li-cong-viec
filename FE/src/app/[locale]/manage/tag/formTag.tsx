@@ -34,6 +34,7 @@ const schema = z.object({
 });
 
 const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
+  const t = useTranslations("ManageTag");
   const form = useForm<IBodyTag>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -160,7 +161,7 @@ const FormTag = ({ id, setId, isOpen, onClose }: Props) => {
                   <FormItem>
                     <div className="flex flex-col gap-2">
                       <Label>
-                        Name <span className="text-red-500">*</span>
+                        {t("name")} <span className="text-red-500">*</span>
                       </Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Input type="text" className="w-full" {...field} />

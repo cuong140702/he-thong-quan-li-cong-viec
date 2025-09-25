@@ -67,6 +67,7 @@ const schema = z.object({
 });
 
 const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
+  const t = useTranslations("ManageTask");
   const form = useForm<IBodyTask>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -257,7 +258,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                 render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <Label>
-                      Title <span className="text-red-500">*</span>
+                      {t("title")} <span className="text-red-500">*</span>
                     </Label>
                     <Input type="text" {...field} />
                     <FormMessage>
@@ -274,7 +275,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Description</Label>
+                    <Label>{t("description")}</Label>
                     <Textarea {...field} value={field.value ?? ""} />
                     <FormMessage />
                   </FormItem>
@@ -287,7 +288,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                 render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <Label>
-                      Status <span className="text-red-500">*</span>
+                      {t("status")} <span className="text-red-500">*</span>
                     </Label>
                     <Select
                       value={field.value ?? undefined}
@@ -315,7 +316,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                 name="deadline"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Deadline</Label>
+                    <Label>{t("deadline")}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full text-left">
@@ -342,7 +343,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                 name="projectId"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Project</Label>
+                    <Label>{t("project")}</Label>
                     <Select
                       value={field.value ?? undefined}
                       onValueChange={field.onChange}
@@ -368,7 +369,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                 name="tags"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Tags</Label>
+                    <Label>{t("tags")}</Label>
                     <BaseSelect
                       isMulti
                       options={dataTag.map((tag) => ({

@@ -58,5 +58,23 @@
     "newPassword": "Mật khẩu mới",
     "confirmPassword": "Xác nhận mật khẩu mới",
     "updatePassword": "Cập nhật mật khẩu"
+  },
+  "ManageProject": {
+    "name": "Tên",
+    "description": "Mô tả",
+    "user": "Người tạo"
+  },
+  "ManageTask": {
+    "stt": "STT",
+    "title": "Tiêu đề",
+    "description": "Mô tả",
+    "status": "Trạng thái",
+    "deadline": "Hạn chót",
+    "project": "Dự án",
+    "tags": "Thẻ"
+  },
+  "ManageTag": {
+    "stt": "STT",
+    "name": "Tên"
   }
 }

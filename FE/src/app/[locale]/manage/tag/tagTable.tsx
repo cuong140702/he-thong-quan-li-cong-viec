@@ -35,6 +35,7 @@ import { IGetTagsResponse } from "@/utils/interface/tag";
 import FormTag from "./formTag";
 import TableAction from "@/components/TableAction";
 import { ShowIfCan } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -47,15 +48,17 @@ export const TableContext = createContext({
   setIsRefreshList: (_: boolean) => {},
 });
 
-export const columns: ColumnDef<IGetTagsResponse>[] = [
+export const getColumns = (
+  t: (key: string) => string
+): ColumnDef<IGetTagsResponse>[] => [
   {
     id: "stt",
-    header: "STT",
+    header: t("stt"),
     cell: ({ row }) => row.index + 1,
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: t("name"),
     cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
@@ -84,6 +87,8 @@ export const columns: ColumnDef<IGetTagsResponse>[] = [
 
 export default function TagTable() {
   const loadingContext = useContext(LoadingData);
+  const t = useTranslations("ManageTag");
+  const columns = getColumns(t);
   const searchParams = useSearchParams();
   const router = useRouter();
   const pageFromParams = useMemo(

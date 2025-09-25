@@ -54,6 +54,7 @@ const schema = z.object({
 
 const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
   const tCommon = useTranslations("Common");
+  const t = useTranslations("ManageProject");
   const form = useForm<IBodyProject>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -220,7 +221,7 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
                   <FormItem>
                     <div className="flex flex-col gap-2">
                       <Label>
-                        Name <span className="text-red-500">*</span>
+                        {t("name")} <span className="text-red-500">*</span>
                       </Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Input type="text" className="w-full" {...field} />
@@ -239,7 +240,7 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex flex-col gap-2">
-                      <Label>Description</Label>
+                      <Label>{t("description")}</Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Textarea
                           className="w-full break-words break-all resize-none max-h-40 overflow-auto"
@@ -257,7 +258,7 @@ const FormProject = ({ id, setId, isOpen, onClose }: Props) => {
                 render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <Label>
-                      User <span className="text-red-500">*</span>
+                      {t("user")} <span className="text-red-500">*</span>
                     </Label>
                     <Select
                       value={field.value ?? ""}

@@ -35,6 +35,7 @@ import {
 import FormProject from "./formProject";
 import TableAction from "@/components/TableAction";
 import { ShowIfCan } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -47,22 +48,24 @@ export const TableContext = createContext({
   setIsRefreshList: (_: boolean) => {},
 });
 
-export const columns: ColumnDef<IGetProjectsResponse>[] = [
+export const getColumns = (
+  t: (key: string) => string
+): ColumnDef<IGetProjectsResponse>[] => [
   {
     accessorKey: "name",
-    header: "Name",
+    header: t("name"),
     cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "description",
-    header: "Description",
+    header: t("description"),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("description")}</div>
     ),
   },
   {
     id: "user",
-    header: "User",
+    header: t("user"),
     cell: ({ row }) => (
       <span className="capitalize">{row.original.user?.fullName ?? "—"}</span>
     ),
@@ -93,6 +96,8 @@ export const columns: ColumnDef<IGetProjectsResponse>[] = [
 
 export default function ProjectTable() {
   const loadingContext = useContext(LoadingData);
+  const t = useTranslations("ManageProject");
+  const columns = getColumns(t);
   const searchParams = useSearchParams();
   const router = useRouter();
   const pageFromParams = useMemo(
