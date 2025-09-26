@@ -37,8 +37,15 @@ export const getAccessTokenFromLocalStorage = () =>
 
 export const getRefreshTokenFromLocalStorage = () =>
   isBrowser ? localStorage.getItem("refreshToken") : null;
+
+export const getUserAvatarFromLocalStorage = (id: string) =>
+  isBrowser ? localStorage.getItem(`userAvatar_${id}`) : null;
+
 export const setAccessTokenToLocalStorage = (value: string) =>
   isBrowser && localStorage.setItem("accessToken", value);
+
+export const setUserAvatarToLocalStorage = (value: string, id: string) =>
+  isBrowser && localStorage.setItem(`userAvatar_${id}`, value);
 
 export const setRefreshTokenToLocalStorage = (value: string) =>
   isBrowser && localStorage.setItem("refreshToken", value);

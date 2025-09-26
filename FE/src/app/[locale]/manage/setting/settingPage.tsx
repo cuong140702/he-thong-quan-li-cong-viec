@@ -40,8 +40,10 @@ import {
 import { TokenPayload } from "@/utils/interface/auth";
 import {
   getRefreshTokenFromLocalStorage,
+  getUserAvatarFromLocalStorage,
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage,
+  setUserAvatarToLocalStorage,
 } from "@/lib/utils";
 import authApiRequest from "@/apiRequests/auth";
 
@@ -51,8 +53,7 @@ export default function SettingsPage() {
   const tSecurity = useTranslations("Security");
   const tCommon = useTranslations("Common");
   const { dataUser, setDataUser } = useAppContext();
-  const localAvatar =
-    typeof window !== "undefined" ? localStorage.getItem("userAvatar") : null;
+  const localAvatar = getUserAvatarFromLocalStorage(dataUser?.userId || "");
 
   const form = useForm<IUpdateUser>({
     defaultValues: {
@@ -96,7 +97,7 @@ export default function SettingsPage() {
     if (avatarFile) {
       const res = await mediaApiRequest.uploadFiles([avatarFile]);
       avatarUrl = res?.data?.[0]?.url ?? previewAvatar;
-      localStorage.setItem("userAvatar", avatarUrl || "");
+      setUserAvatarToLocalStorage(avatarUrl || "", dataUser?.userId || "");
     }
 
     if (!dataUser?.userId) return;
@@ -186,6 +187,9 @@ export default function SettingsPage() {
 
                       if (file) {
                         setAvatarFile(file);
+                        form.setValue("avatarUrl", URL.createObjectURL(file), {
+                          shouldDirty: true,
+                        });
                       }
                     }}
                   />
