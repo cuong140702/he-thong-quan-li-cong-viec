@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -51,6 +51,8 @@ export default function SettingsPage() {
   const tSecurity = useTranslations("Security");
   const tCommon = useTranslations("Common");
   const { dataUser, setDataUser } = useAppContext();
+  const localAvatar =
+    typeof window !== "undefined" ? localStorage.getItem("userAvatar") : null;
 
   const form = useForm<IUpdateUser>({
     defaultValues: {
@@ -60,11 +62,11 @@ export default function SettingsPage() {
       avatarUrl: "",
     },
   });
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [saving, setSaving] = useState(false);
+  const avatar = form.watch("avatarUrl");
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [dataRoles, setDataRoles] = useState<IRolesRes[]>([]);
 
   useEffect(() => {
@@ -77,17 +79,24 @@ export default function SettingsPage() {
         fullName: dataUser.fullName,
         email: dataUser.email,
         roleId: dataUser.roleId,
+        avatarUrl: localAvatar || "",
       });
     }
   }, [dataUser, form, dataRoles]);
 
+  const previewAvatar = useMemo(
+    () => (avatarFile ? URL.createObjectURL(avatarFile) : avatar),
+    [avatarFile, avatar]
+  );
+
   const onSubmit = async (data: IUpdateUser) => {
     const refreshToken = getRefreshTokenFromLocalStorage();
-    let avatarUrl = avatarPreview;
+    let avatarUrl = previewAvatar;
 
     if (avatarFile) {
       const res = await mediaApiRequest.uploadFiles([avatarFile]);
-      avatarUrl = res?.data?.[0]?.url ?? avatarPreview;
+      avatarUrl = res?.data?.[0]?.url ?? previewAvatar;
+      localStorage.setItem("userAvatar", avatarUrl || "");
     }
 
     if (!dataUser?.userId) return;
@@ -96,6 +105,7 @@ export default function SettingsPage() {
       avatarUrl,
       refreshToken: refreshToken || "",
     });
+
     const { id, ...rest } = res?.data as TokenPayload & {
       id: string;
       accessToken: string;
@@ -155,9 +165,10 @@ export default function SettingsPage() {
                 {/* Avatar */}
                 <div className="flex flex-col items-center gap-3">
                   <Avatar className="w-28 h-28 border">
-                    <AvatarImage src={avatarPreview} alt="Avatar" />
+                    <AvatarImage src={previewAvatar} alt="Avatar" />
                     <AvatarFallback>NV</AvatarFallback>
                   </Avatar>
+
                   <Button
                     variant="secondary"
                     size="sm"
@@ -175,7 +186,6 @@ export default function SettingsPage() {
 
                       if (file) {
                         setAvatarFile(file);
-                        setAvatarPreview(URL.createObjectURL(file));
                       }
                     }}
                   />
