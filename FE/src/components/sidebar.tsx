@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+import { useTranslations } from "next-intl";
 import {
   Home,
   ListTodo,
@@ -10,7 +12,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
 import { useAppContext } from "./app-context";
 import { cn } from "@/lib/utils";
 import { useHasMounted } from "./customHook";
@@ -98,4 +99,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

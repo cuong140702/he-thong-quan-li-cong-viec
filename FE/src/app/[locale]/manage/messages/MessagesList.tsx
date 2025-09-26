@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,15 +29,16 @@ export default function MessagesList() {
   const loadingContext = useContext(LoadingData);
   const accessToken = getAccessTokenFromLocalStorage();
   const { sockets } = useAppContext();
-  const { messages: message } = (sockets || {}) as Sockets;
-
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { messages: message } = (sockets || {}) as Sockets;
+  const currentUserId = decodeToken(accessToken as string)?.userId;
+  const userId = useMemo(() => searchParams.get("userId"), [searchParams]);
+
   const [selectedUser, setSelectedUser] = useState<IGetUserMessage>();
   const [messages, setMessages] = useState<IGetMessageBetweenRes[]>([]);
   const [users, setUsers] = useState<IGetUserMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const currentUserId = decodeToken(accessToken as string)?.userId;
 
   useEffect(() => {
     if (!currentUserId || !selectedUser) return;
@@ -77,7 +78,6 @@ export default function MessagesList() {
   }, [message]);
 
   useEffect(() => {
-    const userId = searchParams.get("userId");
     if (userId && users.length > 0) {
       const foundUser = users.find((u) => u.id === userId);
       if (foundUser) {

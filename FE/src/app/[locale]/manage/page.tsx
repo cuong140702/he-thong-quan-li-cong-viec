@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import CountUp from "react-countup";
 import dashboardApiRequest from "@/apiRequests/dashboard";
@@ -10,7 +10,6 @@ import { IDashboardRes } from "@/utils/interface/dashboard";
 import { useTranslations } from "next-intl";
 
 export default function Home(props: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(props.params);
   const t = useTranslations("Dashboard");
   const loadingContext = useContext(LoadingData);
   const [taskData, setTaskData] = useState<IDashboardRes>();
@@ -44,7 +43,7 @@ export default function Home(props: { params: Promise<{ locale: string }> }) {
         {/* Tổng Task */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-foreground">Tổng Task</CardTitle>
+            <CardTitle className="text-foreground">{t("totalTasks")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
@@ -56,7 +55,9 @@ export default function Home(props: { params: Promise<{ locale: string }> }) {
         {/* Hoàn thành */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-foreground">Hoàn thành</CardTitle>
+            <CardTitle className="text-foreground">
+              {t("completedTasks")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
@@ -69,7 +70,7 @@ export default function Home(props: { params: Promise<{ locale: string }> }) {
         <Card className="bg-white dark:bg-[#101728] border border-border dark:border-[#1e293b] shadow-md rounded-2xl">
           <CardHeader>
             <CardTitle className="text-foreground">
-              Thời gian tuần này
+              {t("totalTimeTracked")}
             </CardTitle>
           </CardHeader>
           <CardContent>

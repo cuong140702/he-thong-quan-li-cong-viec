@@ -17,7 +17,10 @@
     "loginWithGoogle": "Login with Google"
   },
   "Dashboard": {
-    "title": "Dashboard"
+    "title": "Dashboard",
+    "totalTasks": "Total Tasks",
+    "completedTasks": "Completed Tasks",
+    "totalTimeTracked": "Total Time Tracked"
   },
   "SwitchLanguage": {
     "title": "Switch language",
