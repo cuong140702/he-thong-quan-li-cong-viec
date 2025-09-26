@@ -32,6 +32,7 @@ const NotificationDropdown = () => {
 
     const handler = (notification: INotificationRes) => {
       setDataNotifications((prev) => [notification, ...prev]);
+      handleListMessage();
     };
 
     message.on("receive-notification", handler);
@@ -46,8 +47,6 @@ const NotificationDropdown = () => {
       loadingContext?.show();
       const res = await notificationApiRequest.getNotifications();
       const responseData = res.data;
-      console.log("res", responseData?.data);
-
       if (responseData) {
         setDataNotifications(responseData.data ?? []);
       }
@@ -55,6 +54,24 @@ const NotificationDropdown = () => {
       toast.error("Lỗi khi tải danh sách!");
     } finally {
       loadingContext?.hide();
+    }
+  };
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      if (!id) return;
+
+      const res = await notificationApiRequest.markAsRead(id);
+
+      if (res.statusCode === 200) {
+        setDataNotifications((prev) =>
+          prev.map((noti) =>
+            noti.id === id ? { ...noti, isRead: true } : noti
+          )
+        );
+      }
+    } catch (error) {
+      toast.error("Đã có lỗi xảy ra!");
     }
   };
 
@@ -121,11 +138,18 @@ const NotificationDropdown = () => {
                       <li
                         key={idx}
                         className={`p-3 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors ${
-                          noti.isRead ? "" : "bg-gray-100 dark:bg-gray-800"
+                          noti.isRead
+                            ? "cursor-default"
+                            : "bg-gray-100 dark:bg-gray-800 cursor-pointer"
                         }`}
+                        onClick={
+                          !noti.isRead
+                            ? () => handleMarkAsRead(noti.id)
+                            : undefined
+                        }
                       >
                         <p className="font-semibold text-gray-900 dark:text-white">
-                          {noti.title}
+                          {noti.title} {JSON.stringify(noti.id)}
                         </p>
                         <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                           {noti.content}
@@ -146,4 +170,4 @@ const NotificationDropdown = () => {
   );
 };
 
-export default NotificationDropdown;
+export default React.memo(NotificationDropdown);

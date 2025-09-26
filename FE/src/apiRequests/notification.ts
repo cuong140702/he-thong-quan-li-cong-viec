@@ -6,6 +6,10 @@ const notificationApiRequest = {
     http.get<IBackendRes<INotificationRes[]>>(`notifications`),
 
   deleteAllNotification: () => http.delete(`notifications/clear-all`),
+
+  markAsRead(id: string) {
+    return http.patch(`notifications/${id}/read`, null);
+  },
 };
 
 export default notificationApiRequest;

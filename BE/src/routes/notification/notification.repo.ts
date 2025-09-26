@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/shared/services/prisma.service'
 
 @Injectable()
@@ -27,6 +27,21 @@ export class NotificationRepo {
         //@ts-ignore
         deletedAt: new Date(),
       },
+    })
+  }
+
+  async markAsRead(id: string) {
+    const notification = await this.prisma.notification.findUnique({
+      where: { id },
+    })
+
+    if (!notification) {
+      throw new NotFoundException('Notification not found')
+    }
+
+    return this.prisma.notification.update({
+      where: { id },
+      data: { isRead: true },
     })
   }
 }

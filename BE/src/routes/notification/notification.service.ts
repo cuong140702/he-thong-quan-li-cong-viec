@@ -20,4 +20,8 @@ export class NotificationService {
       throw error
     }
   }
+
+  async markAsRead({ id }: { id: string }) {
+    return await this.notificationRepo.markAsRead(id)
+  }
 }

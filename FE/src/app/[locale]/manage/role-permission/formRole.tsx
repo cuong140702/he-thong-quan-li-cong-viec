@@ -47,6 +47,11 @@ const schema = z.object({
 });
 
 const FormRole = ({ id, setId, isOpen, onClose }: Props) => {
+  const loadingContext = useContext(LoadingData);
+  const { setIsRefreshList } = useContext(TableContext);
+  const errorMessageT = useTranslations("ErrorMessage");
+  const tCommon = useTranslations("Common");
+
   const form = useForm<IBodyRole>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -55,11 +60,6 @@ const FormRole = ({ id, setId, isOpen, onClose }: Props) => {
       permissions: [],
     },
   });
-
-  const loadingContext = useContext(LoadingData);
-  const { setIsRefreshList } = useContext(TableContext);
-  const errorMessageT = useTranslations("ErrorMessage");
-  const tCommon = useTranslations("Common");
 
   const [dataPermission, setDataPermission] = useState<IPermissionsRes[]>([]);
 

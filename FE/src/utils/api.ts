@@ -142,6 +142,17 @@ export const http = {
     }
   ) => customFetch<T>(url, "PUT", { ...options, body }),
 
+  patch: <
+    T,
+    B extends Record<string, any> | null | FormData = Record<string, any>
+  >(
+    url: string,
+    body: B,
+    options?: Omit<IRequest, "url" | "method"> & {
+      baseUrl?: string;
+    }
+  ) => customFetch<T>(url, "PATCH", { ...options, body }),
+
   delete: <T>(url: string, options?: Omit<IRequest, "body">) =>
     customFetch<T>(url, "DELETE", options ?? {}),
 };
