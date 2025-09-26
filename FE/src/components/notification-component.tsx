@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useRef, useContext, useEffect, useMemo } from "react";
-import { Bell } from "lucide-react";
+import { Bell, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -75,6 +75,19 @@ const NotificationDropdown = () => {
     }
   };
 
+  const handleMarkAllAsRead = async () => {
+    try {
+      const res = await notificationApiRequest.markAllAsRead();
+      if (res.statusCode === 200) {
+        setDataNotifications((prev) =>
+          prev.map((noti) => ({ ...noti, isRead: true }))
+        );
+      }
+    } catch (error) {
+      toast.error("Đã có lỗi xảy ra!");
+    }
+  };
+
   const handleDelete = async () => {
     loadingContext?.show();
 
@@ -116,14 +129,29 @@ const NotificationDropdown = () => {
           <Card className="shadow-none rounded-none border-none h-full flex flex-col">
             <CardHeader className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <CardTitle className="text-lg font-semibold">Thông báo</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-red-500 hover:bg-red-100 dark:hover:bg-red-900"
-                onClick={handleDelete}
-              >
-                Xóa tất cả
-              </Button>
+              <div className="flex gap-2">
+                {unreadCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleMarkAllAsRead}
+                    className="text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900"
+                  >
+                    Đọc tất cả
+                  </Button>
+                )}
+
+                {dataNotifications.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDelete}
+                    className="text-red-500 hover:bg-red-100 dark:hover:bg-red-900"
+                  >
+                    Xóa tất cả
+                  </Button>
+                )}
+              </div>
             </CardHeader>
 
             <CardContent className=" p-2 flex-1 overflow-auto">
@@ -137,7 +165,7 @@ const NotificationDropdown = () => {
                     {dataNotifications.map((noti, idx) => (
                       <li
                         key={idx}
-                        className={`p-3 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors ${
+                        className={`p-3 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors flex items-start justify-between ${
                           noti.isRead
                             ? "cursor-default"
                             : "bg-gray-100 dark:bg-gray-800 cursor-pointer"
@@ -148,15 +176,21 @@ const NotificationDropdown = () => {
                             : undefined
                         }
                       >
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {noti.title} {JSON.stringify(noti.id)}
-                        </p>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                          {noti.content}
-                        </p>
-                        <time className="block text-xs text-gray-500 dark:text-gray-400 mt-1 select-none">
-                          {new Date(noti.createdAt).toLocaleString()}
-                        </time>
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900 dark:text-white">
+                            {noti.title}
+                          </p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                            {noti.content}
+                          </p>
+                          <time className="block text-xs text-gray-500 dark:text-gray-400 mt-1 select-none">
+                            {new Date(noti.createdAt).toLocaleString()}
+                          </time>
+                        </div>
+
+                        {noti.isRead && (
+                          <Check className="w-4 h-4 text-green-500 ml-2 shrink-0" />
+                        )}
                       </li>
                     ))}
                   </ul>

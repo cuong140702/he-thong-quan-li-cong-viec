@@ -22,6 +22,24 @@ export class NotificationService {
   }
 
   async markAsRead({ id }: { id: string }) {
-    return await this.notificationRepo.markAsRead(id)
+    try {
+      await this.notificationRepo.markAsRead(id)
+      return {
+        message: 'Mark as read successfully',
+      }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async markAllAsRead(userId: string) {
+    try {
+      await this.notificationRepo.markAllAsRead(userId)
+      return {
+        message: 'Mark all as read successfully',
+      }
+    } catch (error) {
+      throw error
+    }
   }
 }

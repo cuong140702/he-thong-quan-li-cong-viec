@@ -12,7 +12,7 @@ export class NotificationController {
 
   @Get()
   @ZodSerializerDto(NotificationSchemaDTO)
-  async getMyNotifications(@ActiveUser('userId') userId: string) {
+  getMyNotifications(@ActiveUser('userId') userId: string) {
     return this.notificationService.getMyNotifications(userId)
   }
 
@@ -23,7 +23,14 @@ export class NotificationController {
   }
 
   @Patch(':notificationId/read')
+  @ZodSerializerDto(MessageResDTO)
   markAsRead(@Param() params: GetNotificationParamsDTO) {
     return this.notificationService.markAsRead({ id: String(params.notificationId) })
+  }
+
+  @Patch('mark-all-read')
+  @ZodSerializerDto(MessageResDTO)
+  async markAllAsRead(@ActiveUser('userId') userId: string) {
+    return this.notificationService.markAllAsRead(userId)
   }
 }

@@ -10,6 +10,10 @@ const notificationApiRequest = {
   markAsRead(id: string) {
     return http.patch(`notifications/${id}/read`, null);
   },
+
+  markAllAsRead() {
+    return http.patch(`notifications/mark-all-read`, null);
+  },
 };
 
 export default notificationApiRequest;

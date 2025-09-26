@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +34,7 @@ export default function MessagesList() {
   const { messages: message } = (sockets || {}) as Sockets;
   const currentUserId = decodeToken(accessToken as string)?.userId;
   const userId = useMemo(() => searchParams.get("userId"), [searchParams]);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedUser, setSelectedUser] = useState<IGetUserMessage>();
   const [messages, setMessages] = useState<IGetMessageBetweenRes[]>([]);
@@ -89,6 +90,12 @@ export default function MessagesList() {
   useEffect(() => {
     handleFindAllExcluding();
   }, []);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   useEffect(() => {
     const handleReceiveMessage = (message: IGetMessageBetweenRes) => {
@@ -264,6 +271,7 @@ export default function MessagesList() {
                     </div>
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
 

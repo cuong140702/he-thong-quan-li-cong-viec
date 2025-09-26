@@ -9,6 +9,7 @@ export class NotificationRepo {
     const res = await this.prisma.notification.findMany({
       where: {
         userId,
+        deletedAt: null,
       },
       orderBy: {
         createdAt: 'desc',
@@ -24,7 +25,6 @@ export class NotificationRepo {
         userId: userId,
       },
       data: {
-        //@ts-ignore
         deletedAt: new Date(),
       },
     })
@@ -41,6 +41,13 @@ export class NotificationRepo {
 
     return this.prisma.notification.update({
       where: { id },
+      data: { isRead: true },
+    })
+  }
+
+  markAllAsRead(userId: string) {
+    return this.prisma.notification.updateMany({
+      where: { userId },
       data: { isRead: true },
     })
   }
