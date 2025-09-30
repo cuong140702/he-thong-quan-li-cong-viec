@@ -98,21 +98,22 @@ export default function MessagesList() {
   }, [messages]);
 
   useEffect(() => {
-    const handleReceiveMessage = (message: IGetMessageBetweenRes) => {
+    const handleReceiveMessage = (msg: IGetMessageBetweenRes) => {
       if (
-        (message.senderId === selectedUser?.id &&
-          message.receiverId === currentUserId) ||
-        (message.receiverId === selectedUser?.id &&
-          message.senderId === currentUserId)
+        (msg.senderId === selectedUser?.id &&
+          msg.receiverId === currentUserId) ||
+        (msg.receiverId === selectedUser?.id && msg.senderId === currentUserId)
       ) {
-        setMessages((prev) => [...prev, message]);
+        setMessages((prev) => [...prev, msg]);
       }
     };
 
     message?.on("receive-message", handleReceiveMessage);
+    message?.on("message-sent", handleReceiveMessage);
 
     return () => {
       message?.off("receive-message", handleReceiveMessage);
+      message?.off("message-sent", handleReceiveMessage);
     };
   }, [message, selectedUser, currentUserId]);
 
@@ -127,16 +128,6 @@ export default function MessagesList() {
     } as IGetMessageBetweenRes;
 
     message?.emit("send-message", payload);
-    setMessages((prev) => [
-      ...prev,
-      {
-        ...payload,
-        senderId: payload.senderId,
-        receiverId: payload.receiverId,
-        content: payload.content,
-      },
-    ]);
-
     setNewMessage("");
   };
 

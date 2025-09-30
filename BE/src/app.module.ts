@@ -18,6 +18,8 @@ import { PermissionModule } from './routes/permission/permission.module'
 import { TimelogModule } from './routes/timelogs/timelog.module'
 import { DashboardModule } from './routes/dashboard/dashboard.module'
 import { MediaModule } from './routes/media/media.module'
+import { ScheduleModule } from '@nestjs/schedule'
+import { ReminderModule } from './routes/reminder/reminder.module'
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { MediaModule } from './routes/media/media.module'
     TimelogModule,
     DashboardModule,
     MediaModule,
+    ReminderModule,
+    ScheduleModule.forRoot(),
   ],
 
   controllers: [AppController],

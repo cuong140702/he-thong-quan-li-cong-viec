@@ -29,11 +29,12 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
     if (!token) return
 
     const { userId } = await this.tokenService.verifyAccessToken(token)
-    // Join room theo userId
-    socket.join(generateRoomUserId(userId))
+    const userRoom = generateRoomUserId(userId)
+    console.log(userRoom)
 
-    // Gửi thông báo cho tất cả client khác
-    this.server.emit('user-status-changed', {
+    socket.join(userRoom)
+
+    this.server.to(userRoom).emit('user-status-changed', {
       userId,
       isOnline: true,
     })
@@ -47,9 +48,10 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
     if (!token) return
 
     const { userId } = await this.tokenService.verifyAccessToken(token)
+    const userRoom = generateRoomUserId(userId)
     await this.messageRepo.setUserOnlineStatus(userId, false)
     await this.messageRepo.updateLastSeen(userId, new Date())
-    this.server.emit('user-status-changed', {
+    this.server.to(userRoom).emit('user-status-changed', {
       userId,
       isOnline: false,
       lastSeen: new Date(),
@@ -62,7 +64,10 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
     const message = await this.messageRepo.createMessage(payload)
 
     const receiverRoom = generateRoomUserId(payload.receiverId)
+    const senderRoom = generateRoomUserId(payload.senderId)
+
     this.server.to(receiverRoom).emit('receive-message', message)
+    this.server.to(senderRoom).emit('message-sent', message)
     this.server.to(receiverRoom).emit('receive-notification', {
       userId: message.receiverId,
       title: 'Tin nhắn mới',
