@@ -8,6 +8,7 @@ export const MessageSchema = z.object({
   content: z.string(),
   isRead: z.boolean().default(false),
   createdAt: z.date(),
+  type: z.string(),
 })
 
 export const CreateMessageBodySchema = MessageSchema.pick({
@@ -15,6 +16,7 @@ export const CreateMessageBodySchema = MessageSchema.pick({
   receiverId: true,
   content: true,
   createdAt: true,
+  type: true,
 })
 
 export const GetMessagesParamsSchema = z.object({

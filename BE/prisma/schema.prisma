@@ -164,6 +164,7 @@ model Permission {
 model Message {
   id         String   @id @default(uuid())
   content    String
+  type       String   @default("text") 
   createdAt  DateTime @default(now())
   isRead     Boolean  @default(false)
 

@@ -11,6 +11,7 @@ export interface IGetMessageBetweenRes {
   content: string;
   isRead?: boolean;
   createdAt?: Date;
+  type?: "text" | "image" | "file";
 }
 
 export interface IGetUserMessage {

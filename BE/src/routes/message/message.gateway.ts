@@ -61,6 +61,8 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
 
   @SubscribeMessage('send-message')
   async handleSendMessage(@MessageBody() payload: CreateMessageBodyType): Promise<CreateMessageBodyType> {
+    if (!payload.type) payload.type = 'text'
+
     const message = await this.messageRepo.createMessage(payload)
 
     const receiverRoom = generateRoomUserId(payload.receiverId)

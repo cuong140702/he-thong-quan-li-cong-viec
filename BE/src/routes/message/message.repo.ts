@@ -14,10 +14,12 @@ export class MessageRepo {
           receiverId: data.receiverId,
           content: data.content,
           createdAt: data.createdAt,
+          type: data.type,
         },
         select: {
           id: true,
           content: true,
+          type: true,
           senderId: true,
           receiverId: true,
           createdAt: true,
