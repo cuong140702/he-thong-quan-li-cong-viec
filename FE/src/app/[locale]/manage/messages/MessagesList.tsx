@@ -378,14 +378,14 @@ export default function MessagesList() {
                     <div className="flex justify-center items-center mb-1">
                       <Label
                         htmlFor="imageUpload"
-                        className="cursor-pointer flex items-center justify-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-lg px-2"
+                        className="cursor-pointer flex  text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-lg px-2"
                       >
                         <ImageIcon className="w-7 h-7" />
                       </Label>
 
                       {/* Nút gửi */}
                       <Button
-                        className="rounded-full w-7 h-7 flex items-center justify-center bg-blue-500 hover:bg-blue-600 transition shadow-md"
+                        className="rounded-full w-7 h-7 flex  bg-blue-500 hover:bg-blue-600 transition shadow-md px-2"
                         type="submit"
                         onClick={handleSendMessage}
                       >
