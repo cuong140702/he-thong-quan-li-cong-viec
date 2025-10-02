@@ -1,17 +1,8 @@
+import { NotificationSchema } from 'src/shared/models/shared-notification.model'
 import z from 'zod'
 
 export const GetNotificationsQuery = z.object({
   userId: z.string().uuid(),
-})
-
-export const NotificationSchema = z.object({
-  id: z.string().uuid(),
-  title: z.string(),
-  content: z.string().nullable(),
-  isRead: z.boolean(),
-  createdAt: z.date(),
-  userId: z.string().uuid(),
-  senderId: z.string().uuid().nullable(),
 })
 
 export const GetNotificationResSchema = z.object({

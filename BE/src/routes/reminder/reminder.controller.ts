@@ -1,12 +1,20 @@
 // reminder.controller.ts
-import { Controller, Post, Body } from '@nestjs/common'
+import { Controller, Post, Body, Get, Query } from '@nestjs/common'
 import { ReminderService } from './reminder.service'
 import { ZodSerializerDto } from 'nestjs-zod'
-import { CreateReminderBodyDTO, CreateReminderResDTO } from './reminder.dto'
+import { CreateReminderBodyDTO, CreateReminderResDTO, GetRemindersQueryDTO, GetRemindersResDTO } from './reminder.dto'
 
 @Controller('reminders')
 export class ReminderController {
   constructor(private readonly reminderService: ReminderService) {}
+
+  @Get()
+  @ZodSerializerDto(GetRemindersResDTO)
+  getReminders(@Query() query: GetRemindersQueryDTO) {
+    return this.reminderService.getReminders({
+      query,
+    })
+  }
 
   @Post()
   @ZodSerializerDto(CreateReminderResDTO)

@@ -8,55 +8,47 @@ import {
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
 import { Logger } from '@nestjs/common'
-import { generateRoomUserId } from 'src/websockets/websocket.adapter'
 import { CreateMessageBodyType } from './message.model'
 import { MessageRepo } from './message.repo'
-import { TokenService } from 'src/shared/services/token.service'
 
 @WebSocketGateway({ namespace: 'messages' })
 export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server // Đúng kiểu
-
+  @WebSocketServer() server: Server
   private readonly logger = new Logger(MessageGateway.name)
 
-  constructor(
-    private readonly messageRepo: MessageRepo,
-    private readonly tokenService: TokenService,
-  ) {}
+  constructor(private readonly messageRepo: MessageRepo) {}
 
   async handleConnection(socket: Socket) {
-    const token = socket.handshake.auth.authorization?.split(' ')[1]
-    if (!token) return
+    const userId = socket.data?.userId
 
-    const { userId } = await this.tokenService.verifyAccessToken(token)
-    const userRoom = generateRoomUserId(userId)
-    console.log(userRoom)
+    if (!userId) return
 
-    socket.join(userRoom)
+    // User online
+    await this.messageRepo.setUserOnlineStatus(userId, true)
 
-    this.server.to(userRoom).emit('user-status-changed', {
+    this.server.to(userId).emit('user-status-changed', {
       userId,
       isOnline: true,
     })
 
-    await this.messageRepo.setUserOnlineStatus(userId, true)
-    this.logger.log(`User ${userId} connected`)
+    this.logger.log(`User ${userId} connected (socket: ${socket.id})`)
   }
 
   async handleDisconnect(socket: Socket) {
-    const token = socket.handshake.auth.authorization?.split(' ')[1]
-    if (!token) return
+    const userId = socket.data?.userId
+    if (!userId) return
 
-    const { userId } = await this.tokenService.verifyAccessToken(token)
-    const userRoom = generateRoomUserId(userId)
+    // User offline + update last seen
     await this.messageRepo.setUserOnlineStatus(userId, false)
     await this.messageRepo.updateLastSeen(userId, new Date())
-    this.server.to(userRoom).emit('user-status-changed', {
+
+    this.server.to(userId).emit('user-status-changed', {
       userId,
       isOnline: false,
       lastSeen: new Date(),
     })
-    this.logger.log(`User ${userId} disconnected`)
+
+    this.logger.log(`User ${userId} disconnected (socket: ${socket.id})`)
   }
 
   @SubscribeMessage('send-message')
@@ -65,12 +57,12 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
 
     const message = await this.messageRepo.createMessage(payload)
 
-    const receiverRoom = generateRoomUserId(payload.receiverId)
-    const senderRoom = generateRoomUserId(payload.senderId)
+    // Emit cho cả 2 phòng (receiver + sender)
+    this.server.to(message.receiverId).emit('receive-message', message)
+    this.server.to(message.senderId).emit('message-sent', message)
 
-    this.server.to(receiverRoom).emit('receive-message', message)
-    this.server.to(senderRoom).emit('message-sent', message)
-    this.server.to(receiverRoom).emit('receive-notification', {
+    // Emit notification cho receiver
+    this.server.to(message.receiverId).emit('receive-notification', {
       userId: message.receiverId,
       title: 'Tin nhắn mới',
       content: `${message.sender.fullName} đã gửi tin nhắn cho bạn`,

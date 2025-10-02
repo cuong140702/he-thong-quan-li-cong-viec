@@ -41,6 +41,7 @@ export class WebsocketAdapter extends IoAdapter {
     }
     try {
       const { userId } = await this.tokenService.verifyAccessToken(accessToken)
+      socket.data.userId = userId
       await socket.join(generateRoomUserId(userId))
       next()
     } catch (error) {

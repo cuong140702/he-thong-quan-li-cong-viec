@@ -118,6 +118,8 @@ model Reminder {
   taskId String
   task   Task   @relation(fields: [taskId], references: [id])
 
+  deletedAt DateTime?
+
   @@index([taskId])
   @@index([remindAt])
   @@index([isSent])
