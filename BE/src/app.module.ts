@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { SharedModule } from 'src/shared/shared.module'
@@ -20,6 +20,8 @@ import { DashboardModule } from './routes/dashboard/dashboard.module'
 import { MediaModule } from './routes/media/media.module'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ReminderModule } from './routes/reminder/reminder.module'
+import { ActivityModule } from './routes/activity/activity.module'
+import { ActivityMiddleware } from './shared/middlewares/activity.middleware'
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { ReminderModule } from './routes/reminder/reminder.module'
     DashboardModule,
     MediaModule,
     ReminderModule,
+    ActivityModule,
     ScheduleModule.forRoot(),
   ],
 
@@ -54,4 +57,8 @@ import { ReminderModule } from './routes/reminder/reminder.module'
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ActivityMiddleware).forRoutes('*') // ✅ Áp dụng cho toàn bộ route
+  }
+}

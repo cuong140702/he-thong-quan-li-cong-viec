@@ -29,6 +29,7 @@ model User {
   notifications    Notification[] @relation("NotificationReceiver") 
   sentNotifications Notification[] @relation("SenderRelation") 
   webSockets       Websocket[]
+  activities      Activity[]
 }
 
 
@@ -208,6 +209,21 @@ model Websocket {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   createdAt DateTime @default(now())
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  action      String
+  module      String
+  details     String?  @db.Text
+  createdAt   DateTime @default(now())
+  deletedAt   DateTime?
+
+  @@index([userId])
+  @@index([module])
+  @@index([createdAt])
 }
 
 

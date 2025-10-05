@@ -7,8 +7,10 @@ import { JwtModule } from '@nestjs/jwt'
 import { AccessTokenGuard } from './guards/access-token.guard'
 import { AuthenticationGuard } from './guards/authentication.guard'
 import { SharedWebsocketRepository } from './repositories/shared-websocket.repo'
+import { ActivityMiddleware } from './middlewares/activity.middleware'
+import { ActivityModule } from 'src/routes/activity/activity.module'
 
-const sharedServices = [PrismaService, HashingService, TokenService, SharedWebsocketRepository]
+const sharedServices = [PrismaService, HashingService, TokenService, SharedWebsocketRepository, ActivityMiddleware]
 
 @Global()
 @Module({
@@ -21,6 +23,6 @@ const sharedServices = [PrismaService, HashingService, TokenService, SharedWebso
     },
   ],
   exports: sharedServices,
-  imports: [JwtModule],
+  imports: [JwtModule, ActivityModule],
 })
 export class SharedModule {}
