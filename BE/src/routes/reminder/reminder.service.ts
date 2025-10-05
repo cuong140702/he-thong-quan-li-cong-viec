@@ -45,4 +45,17 @@ export class ReminderService {
   async handleCron() {
     await this.checkReminders()
   }
+
+  async deleteReminder({ id }: { id: string }) {
+    try {
+      await this.reminderRepo.deleteReminder({
+        id,
+      })
+      return {
+        message: 'Delete successfully',
+      }
+    } catch (error) {
+      throw error
+    }
+  }
 }

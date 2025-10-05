@@ -1,8 +1,15 @@
 // reminder.controller.ts
-import { Controller, Post, Body, Get, Query } from '@nestjs/common'
+import { Controller, Post, Body, Get, Query, Delete, Param } from '@nestjs/common'
 import { ReminderService } from './reminder.service'
 import { ZodSerializerDto } from 'nestjs-zod'
-import { CreateReminderBodyDTO, CreateReminderResDTO, GetRemindersQueryDTO, GetRemindersResDTO } from './reminder.dto'
+import {
+  CreateReminderBodyDTO,
+  CreateReminderResDTO,
+  GetReminderParamsDTO,
+  GetRemindersQueryDTO,
+  GetRemindersResDTO,
+} from './reminder.dto'
+import { MessageResDTO } from 'src/shared/dtos/response.dto'
 
 @Controller('reminders')
 export class ReminderController {
@@ -20,5 +27,13 @@ export class ReminderController {
   @ZodSerializerDto(CreateReminderResDTO)
   async createReminder(@Body() body: CreateReminderBodyDTO) {
     return this.reminderService.createReminder(body.taskId, new Date(body.remindAt))
+  }
+
+  @Delete(':reminderId')
+  @ZodSerializerDto(MessageResDTO)
+  deleteReminder(@Param() params: GetReminderParamsDTO) {
+    return this.reminderService.deleteReminder({
+      id: params.reminderId,
+    })
   }
 }

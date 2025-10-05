@@ -5,7 +5,7 @@ import z from 'zod'
 export const ReminderSchema = z.object({
   id: z.string().uuid(),
   isSent: z.boolean().default(false),
-  remindAt: z.date(),
+  remindAt: z.coerce.date(),
   taskId: z.string().uuid(),
 })
 
@@ -45,6 +45,12 @@ export const CreateSendNotificationSchema = NotificationSchema.pick({
   senderId: true,
 }).strict()
 
+export const GetReminderParamsSchema = z
+  .object({
+    reminderId: z.string().uuid(),
+  })
+  .strict()
+
 export const CreateReminderResSchema = ReminderSchema
 
 export const UpdateReminderBodySchema = CreateReminderBodySchema
@@ -54,3 +60,4 @@ export type CreateReminderResType = z.infer<typeof CreateReminderResSchema>
 export type CreateSendNotificationType = z.infer<typeof CreateSendNotificationSchema>
 export type GetRemindersResType = z.infer<typeof GetRemindersResSchema>
 export type GetRemindersQueryType = z.infer<typeof GetRemindersQuerySchema>
+export type GetReminderParamsType = z.infer<typeof GetReminderParamsSchema>

@@ -94,6 +94,9 @@ const Sidebar = () => {
                 "hover:bg-accent hover:text-accent-foreground",
                 isActive && "bg-accent text-accent-foreground font-medium"
               )}
+              onClick={(e) => {
+                if (pathname === Item.href) e.preventDefault();
+              }}
             >
               <Item.icon className="w-5 h-5" />
               <span className="text-sm font-medium">{Item.label}</span>

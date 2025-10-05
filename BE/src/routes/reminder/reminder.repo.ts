@@ -82,4 +82,13 @@ export class ReminderRepo {
       totalPages: Math.ceil(totalItems / limit),
     }
   }
+
+  async deleteReminder({ id }: { id: string }) {
+    return await this.prisma.reminder.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    })
+  }
 }

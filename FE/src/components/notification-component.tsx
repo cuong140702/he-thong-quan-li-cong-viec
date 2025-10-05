@@ -16,7 +16,7 @@ import { Sockets } from "@/lib/socket";
 const NotificationDropdown = () => {
   const loadingContext = useContext(LoadingData);
   const { sockets } = useAppContext();
-  const { messages: message } = (sockets || {}) as Sockets;
+  const { messages: message, reminders } = (sockets || {}) as Sockets;
   const [dataNotifications, setDataNotifications] = useState<
     INotificationRes[]
   >([]);
@@ -41,6 +41,21 @@ const NotificationDropdown = () => {
       message.off("receive-notification", handler);
     };
   }, [message]);
+
+  useEffect(() => {
+    if (!reminders) return;
+
+    const handler = (notification: INotificationRes) => {
+      setDataNotifications((prev) => [notification, ...prev]);
+      handleListMessage();
+    };
+
+    reminders.on("reminder", handler);
+
+    return () => {
+      reminders.off("reminder", handler);
+    };
+  }, [reminders]);
 
   const handleListMessage = async () => {
     try {

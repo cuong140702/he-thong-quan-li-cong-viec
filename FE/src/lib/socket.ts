@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-const NAME_SPACE_KEYS = ["/", "messages"] as const;
+const NAME_SPACE_KEYS = ["/", "messages", "reminders"] as const;
 type NamespaceKey = (typeof NAME_SPACE_KEYS)[number];
 export type Sockets = Record<NamespaceKey, Socket>;
 

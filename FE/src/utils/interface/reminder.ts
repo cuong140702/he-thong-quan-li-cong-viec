@@ -11,5 +11,5 @@ export interface IGetRemindersResponse {
 
 export interface IBodyReminder {
   taskId: string;
-  remindAt: Date;
+  remindAt: string;
 }
