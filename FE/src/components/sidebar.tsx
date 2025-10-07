@@ -11,6 +11,7 @@ import {
   Folder,
   ShieldCheck,
   AlarmClock,
+  History,
 } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAppContext } from "./app-context";
@@ -60,6 +61,11 @@ const Sidebar = () => {
       href: "/manage/reminder",
       label: t("reminder"),
       icon: AlarmClock,
+    },
+    {
+      href: "/manage/activities",
+      label: t("activities"),
+      icon: History,
     },
     {
       href: "/manage/role-permission",

@@ -1,6 +1,10 @@
 import { http } from "@/utils/api";
 import { IListDataResponse, IQueryBase } from "@/utils/interface/common";
-import { IBodyPermission, IPermissionsRes } from "@/utils/interface/permission";
+import {
+  IBodyPermission,
+  IGetAllModule,
+  IPermissionsRes,
+} from "@/utils/interface/permission";
 
 const permissionsApiRequest = {
   list: (payload: IQueryBase) =>
@@ -13,6 +17,8 @@ const permissionsApiRequest = {
   updatePermission: (id: string, body: IBodyPermission) =>
     http.put(`permission/${id}`, body),
   deletePermission: (id: string) => http.delete(`permission/${id}`),
+  getAllModule: () =>
+    http.get<IBackendRes<IGetAllModule[]>>("permission/all-modules"),
 };
 
 export default permissionsApiRequest;

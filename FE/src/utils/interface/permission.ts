@@ -24,3 +24,7 @@ export interface IBodyPermission {
   path: string;
   method: HTTPMethod;
 }
+
+export interface IGetAllModule {
+  module: string;
+}

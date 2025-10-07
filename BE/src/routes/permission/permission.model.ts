@@ -48,6 +48,10 @@ export const GetPermissionByIdResSchema = PermissionSchema.pick({
   module: true,
 })
 
+export const GetAllModulesResSchema = z.object({
+  data: z.array(PermissionSchema.pick({ module: true })),
+})
+
 export const UpdatePermissionBodySchema = CreatePermissionBodySchema
 
 export type GetPermissionsResType = z.infer<typeof GetPermissionResSchema>
@@ -55,3 +59,4 @@ export type GetPermissionsQueryType = z.infer<typeof GetPermissionsQuerySchema>
 export type CreatePermissionBodyType = z.infer<typeof CreatePermissionBodySchema>
 export type GetPermissionByIdResType = z.infer<typeof GetPermissionByIdResSchema>
 export type UpdatePermissionBodyType = z.infer<typeof UpdatePermissionBodySchema>
+export type GetAllModulesResType = z.infer<typeof GetAllModulesResSchema>

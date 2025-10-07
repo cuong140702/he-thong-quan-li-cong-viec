@@ -34,6 +34,8 @@
     "timeTracking": "Theo dõi thời gian",
     "users": "Người dùng",
     "tags": "Thẻ",
+    "reminder": "Nhắc nhở",
+    "activities": "Hoạt động",
     "role & permission": "Vai trò & quyền hạn"
   },
   "ManageUser": {

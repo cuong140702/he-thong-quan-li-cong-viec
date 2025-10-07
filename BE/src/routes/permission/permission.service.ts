@@ -33,4 +33,8 @@ export class PermissionService {
   async updatePermission(props: { data: UpdatePermissionBodyType; id: string }) {
     return await this.permissionRepo.updatePermission(props.data, props.id)
   }
+
+  async getAllModules() {
+    return await this.permissionRepo.getAllModules()
+  }
 }

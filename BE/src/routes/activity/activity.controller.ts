@@ -1,10 +1,12 @@
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common'
 import { ActivityService } from './activity.service'
 import { Request } from 'express'
+import { IsPublic } from 'src/shared/decorators/auth.decorator'
 
 @Controller('activities')
 export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
+
   @Get()
   async getMyActivities(
     @Req() req: Request,

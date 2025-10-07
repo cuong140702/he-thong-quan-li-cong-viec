@@ -35,6 +35,7 @@
     "users": "Users",
     "tags": "Tags",
     "reminder": "Reminder",
+    "activities": "Activities",
     "role & permission": "Role & Permission"
   },
   "ManageUser": {

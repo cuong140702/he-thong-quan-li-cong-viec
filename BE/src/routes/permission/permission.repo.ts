@@ -3,6 +3,7 @@ import { PrismaService } from 'src/shared/services/prisma.service'
 import { Prisma } from '@prisma/client'
 import {
   CreatePermissionBodyType,
+  GetAllModulesResType,
   GetPermissionByIdResType,
   GetPermissionsResType,
   UpdatePermissionBodyType,
@@ -92,5 +93,15 @@ export class PermissionRepo {
         method: data.method,
       },
     })
+  }
+
+  async getAllModules(): Promise<GetAllModulesResType> {
+    const modules = await this.prismaService.permission.findMany({
+      where: { deletedAt: null },
+      select: { module: true },
+      distinct: ['module'],
+    })
+
+    return { data: modules }
   }
 }
