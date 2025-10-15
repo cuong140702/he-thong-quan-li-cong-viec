@@ -5,6 +5,7 @@ import { ZodSerializerDto } from 'nestjs-zod'
 import {
   CreateTaskBodyDTO,
   CreateTaskResDTO,
+  GetCalendarQueryDTO,
   GetTaskByIdDTO,
   GetTaskParamsDTO,
   GetTasksQueryDTO,
@@ -15,6 +16,8 @@ import {
 import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
 import { MessageResDTO } from 'src/shared/dtos/response.dto'
 import { IsPublic } from 'src/shared/decorators/auth.decorator'
+import { AccessTokenPayload } from 'src/shared/types/jwt.type'
+import { RoleName } from 'src/shared/constants/role.constant'
 
 @Controller('task')
 export class TaskController {
@@ -33,6 +36,17 @@ export class TaskController {
   getTasksByTag(@Query() query: GetTasksQueryDTO) {
     return this.taskService.getTasksByTag({
       query,
+    })
+  }
+
+  @Get('calendar')
+  // @ZodSerializerDto(GetCalendarQueryDTO)
+  async getCalendarTasks(@Query() query: GetCalendarQueryDTO, @ActiveUser() user?: AccessTokenPayload) {
+    const isAdmin = user?.roleName === RoleName.Admin
+    const userId = isAdmin ? query.userId : user?.userId
+    return this.taskService.getTasksInRange({
+      query,
+      userId,
     })
   }
 

@@ -25,6 +25,7 @@ import {
 import { IPermissionsRes, Permission } from "@/utils/interface/permission";
 import React, { ReactNode } from "react";
 import { useAppContext } from "@/components/app-context";
+import { TaskStatus } from "@/utils/enum/task";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -125,16 +126,16 @@ export function formatMessageTime(date: string | Date): string {
 }
 
 /**
- * Định dạng ngày theo yyyy-MM-dd
- * @param date - Ngày cần định dạng (có thể là Date hoặc string)
- * @returns Chuỗi ngày đã định dạng hoặc undefined nếu không có date
+ * Format a date to "yyyy-MM-dd".
+ * @param date - The date value (Date or string).
+ * @returns Formatted date string or undefined if invalid.
  */
-export function formatDate(date?: Date | string | null): string | undefined {
-  if (!date) return undefined;
+export function formatDate(date?: Date | string): string | Date {
+  if (!date) return "";
 
   const parsedDate = typeof date === "string" ? new Date(date) : date;
 
-  if (isNaN(parsedDate.getTime())) return undefined; // kiểm tra invalid date
+  if (isNaN(parsedDate.getTime())) return ""; // tránh Invalid Date
 
   return format(parsedDate, "yyyy-MM-dd");
 }
@@ -235,4 +236,14 @@ export const formatDateTime = (date: Date | string) => {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
   return format(d, "dd/MM/yyyy, HH:mm:ss");
+};
+
+export const colorMap: Record<TaskStatus, string> = {
+  in_progress: "#3b82f6",
+  completed: "#10b981",
+  break: "#f59e0b",
+};
+
+export const handleGetDataTimeZone = (): string => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
 };

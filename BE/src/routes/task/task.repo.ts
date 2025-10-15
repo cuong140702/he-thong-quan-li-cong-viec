@@ -3,6 +3,7 @@ import { PrismaService } from 'src/shared/services/prisma.service'
 import {
   CreateTaskBodyType,
   CreateTaskResType,
+  GetCalendarQueryType,
   GetTasksQueryType,
   GetTasksResType,
   UpdateTaskBodyType,
@@ -164,5 +165,42 @@ export class TaskRepo {
     })
     if (!task) return null
     return task
+  }
+
+  async getTasksInRange({ query, userId }: { query: GetCalendarQueryType; userId: string | undefined }) {
+    const s = query.startDate ? new Date(query.startDate) : undefined
+    const e = query.deadline ? new Date(query.deadline) : undefined
+
+    const where: Prisma.TaskWhereInput = {
+      deletedAt: null,
+      // Task có thời gian tồn tại trong khoảng [s, e]
+      AND: [
+        { startDate: { lte: e } }, // task bắt đầu trước hoặc trong khoảng
+        { deadline: { gte: s } }, // task kết thúc sau hoặc trong khoảng
+      ],
+    }
+
+    if (userId) where.userId = userId
+
+    if (query.projectId) {
+      where.projectId = query.projectId
+    }
+    if (userId) {
+      where.userId = userId
+    }
+
+    return this.prismaService.task.findMany({
+      where,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        startDate: true,
+        deadline: true,
+        status: true,
+        projectId: true,
+        userId: true,
+      },
+    })
   }
 }

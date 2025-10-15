@@ -35,6 +35,7 @@
     "users": "Người dùng",
     "tags": "Thẻ",
     "reminder": "Nhắc nhở",
+    "calendar": "Lịch công việc",
     "activities": "Hoạt động",
     "role & permission": "Vai trò & quyền hạn"
   },
@@ -74,6 +75,7 @@
     "title": "Tiêu đề",
     "description": "Mô tả",
     "status": "Trạng thái",
+    "startDate": "Ngày bắt đầu",
     "deadline": "Hạn chót",
     "project": "Dự án",
     "tags": "Thẻ"

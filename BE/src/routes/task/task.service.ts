@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { TaskRepo } from './task.repo'
-import { CreateTaskBodyType, GetTasksQueryType, UpdateTaskBodyType } from './task.model'
+import { CreateTaskBodyType, GetCalendarQueryType, GetTasksQueryType, UpdateTaskBodyType } from './task.model'
+import { AccessTokenPayload } from 'src/shared/types/jwt.type'
 @Injectable()
 export class TaskService {
   constructor(private readonly taskRepo: TaskRepo) {}
@@ -36,5 +37,9 @@ export class TaskService {
 
   async getTaskById({ id }: { id: string }) {
     return await this.taskRepo.getTaskById(id)
+  }
+
+  async getTasksInRange({ query, userId }: { query: GetCalendarQueryType; userId: string | undefined }) {
+    return await this.taskRepo.getTasksInRange({ query, userId })
   }
 }

@@ -47,7 +47,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { formatDate, toDateSafe } from "@/lib/utils";
+import { formatDate, handleGetDataTimeZone, toDateSafe } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
 type Props = {
@@ -61,6 +61,7 @@ const schema = z.object({
   title: z.string().min(1, { message: "required" }),
   description: z.string().optional().nullable(),
   status: z.enum(TaskStatus, { message: "required" }),
+  startDate: z.date(),
   deadline: z.date(),
   projectId: z.string().optional().nullable(),
   tags: z.array(z.string()),
@@ -74,9 +75,11 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
       title: "",
       description: null,
       status: TaskStatus.in_progress, // giá trị mặc định
+      startDate: undefined,
       deadline: undefined,
       projectId: null,
       tags: [],
+      timeZone: handleGetDataTimeZone(),
     },
   });
   const { setIsRefreshList } = useContext(TableContext);
@@ -188,7 +191,11 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
     try {
       loadingContext?.show();
 
-      const res = await taskApiRequest.updateTask(id, data);
+      const res = await taskApiRequest.updateTask(id, {
+        ...data,
+        deadline: formatDate(data.deadline) as Date,
+        startDate: formatDate(data.startDate) as Date,
+      });
       if (!res) return;
 
       const responseData = res.data;
@@ -208,7 +215,11 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
     try {
       loadingContext?.show();
 
-      const res = await taskApiRequest.addTask(payload);
+      const res = await taskApiRequest.addTask({
+        ...payload,
+        deadline: formatDate(payload.deadline) as Date,
+        startDate: formatDate(payload.startDate) as Date,
+      });
       if (!res) return;
 
       const responseData = res.data;
@@ -234,7 +245,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
       }}
     >
       <DialogContent
-        className="sm:max-w-[600px] max-h-screen overflow-auto"
+        className="sm:max-w-[650px] max-h-screen overflow-auto"
         onCloseAutoFocus={() => {
           form.reset();
           setId("");
@@ -313,6 +324,33 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
 
               <FormField
                 control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label>{t("startDate")}</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full text-left">
+                          {field.value
+                            ? (formatDate(field.value) as string)
+                            : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={toDateSafe(field.value)}
+                          onSelect={(date) => field.onChange(date ?? undefined)}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="deadline"
                 render={({ field }) => (
                   <FormItem>
@@ -321,7 +359,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full text-left">
                           {field.value
-                            ? formatDate(field.value)
+                            ? (formatDate(field.value) as string)
                             : "Select date"}
                         </Button>
                       </PopoverTrigger>

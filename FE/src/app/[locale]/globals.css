@@ -120,3 +120,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+.fc .fc-col-header-cell {
+  color: var(--primary-foreground) !important;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-scrollgrid {
+  border-color: var(--border) !important;
+}
+
+.fc .fc-daygrid-body-unstacked,
+.fc .fc-daygrid-body {
+  border-left-color: var(--border) !important;
+}
+
+.fc .fc-scrollgrid-section-header .fc-scrollgrid-sync-table {
+  border-color: var(--border) !important;
+}
+
+.fc {
+  overflow: hidden !important;
+}

@@ -35,6 +35,7 @@
     "users": "Users",
     "tags": "Tags",
     "reminder": "Reminder",
+    "calendar": "Calendar",
     "activities": "Activities",
     "role & permission": "Role & Permission"
   },
@@ -74,6 +75,7 @@
     "title": "Title",
     "description": "Description",
     "status": "Status",
+    "startDate": "Start Date",
     "deadline": "Deadline",
     "project": "Project",
     "tags": "Tags"

@@ -12,6 +12,8 @@ import {
   ShieldCheck,
   AlarmClock,
   History,
+  icons,
+  Calendar,
 } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAppContext } from "./app-context";
@@ -66,6 +68,11 @@ const Sidebar = () => {
       href: "/manage/activities",
       label: t("activities"),
       icon: History,
+    },
+    {
+      href: "/manage/calendar",
+      label: t("calendar"),
+      icon: Calendar,
     },
     {
       href: "/manage/role-permission",

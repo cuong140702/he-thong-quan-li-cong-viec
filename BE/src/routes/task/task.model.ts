@@ -2,8 +2,6 @@ import { TagSchema } from 'src/shared/models/shared-tag.model'
 import { taskSchema } from 'src/shared/models/shared-task.model'
 import z from 'zod'
 
-// Base schema: dùng cho create/update
-
 // Response từ API
 export const GetTasksResSchema = z.object({
   data: z.array(
@@ -33,12 +31,23 @@ export const GetTasksQuerySchema = z
   })
   .strict()
 
+export const GetCalendarQuerySchema = taskSchema
+  .pick({
+    startDate: true,
+    deadline: true,
+    projectId: true,
+  })
+  .extend({
+    userId: z.string().uuid().optional(),
+  })
+
 // Schema khi tạo
 export const CreateTaskBodySchema = taskSchema
   .pick({
     title: true,
     description: true,
     status: true,
+    startDate: true,
     deadline: true,
     projectId: true,
   })
@@ -64,3 +73,4 @@ export type CreateTaskBodyType = z.infer<typeof CreateTaskBodySchema>
 export type UpdateTaskBodyType = z.infer<typeof UpdateTaskBodySchema>
 export type CreateTaskResType = z.infer<typeof CreateTaskResSchema>
 export type UpdateTaskResType = z.infer<typeof UpdateTaskResSchema>
+export type GetCalendarQueryType = z.infer<typeof GetCalendarQuerySchema>
