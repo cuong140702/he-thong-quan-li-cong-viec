@@ -3,6 +3,7 @@ import {
   CreateTaskBodySchema,
   CreateTaskResSchema,
   GetCalendarQuerySchema,
+  GetCalendarResSchema,
   GetTaskByIdSchema,
   GetTasksQuerySchema,
   GetTasksResSchema,
@@ -20,4 +21,5 @@ export class UpdateTaskBodyDTO extends createZodDto(UpdateTaskBodySchema) {}
 
 export class CreateTaskResDTO extends createZodDto(CreateTaskResSchema) {}
 export class UpdateTaskResDTO extends createZodDto(UpdateTaskResSchema) {}
+export class GetCalendarResDTO extends createZodDto(GetCalendarResSchema) {}
 export class GetTaskParamsDTO extends createZodDto(GetTaskParamsSchema) {}

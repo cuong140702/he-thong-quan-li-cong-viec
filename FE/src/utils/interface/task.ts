@@ -25,4 +25,17 @@ export interface IQueryCalendar {
   startDate: Date;
   deadline: Date;
   projectId?: string;
+  timeZone?: string;
+}
+
+export interface IGetCalendarRes {
+  id: string;
+  title: string;
+  description?: string | null;
+  startDate: Date | null;
+  deadline: Date | null;
+  status: TaskStatus.break | TaskStatus.completed | TaskStatus.in_progress;
+  projectId?: string | null;
+  userId?: string;
+  backgroundColor: string;
 }

@@ -41,6 +41,24 @@ export const GetCalendarQuerySchema = taskSchema
     userId: z.string().uuid().optional(),
   })
 
+export const GetCalendarResSchema = z.object({
+  data: z.array(
+    taskSchema
+      .pick({
+        id: true,
+        title: true,
+        description: true,
+        startDate: true,
+        deadline: true,
+        status: true,
+        projectId: true,
+      })
+      .extend({
+        userId: z.string().uuid(),
+      }),
+  ),
+})
+
 // Schema khi tạo
 export const CreateTaskBodySchema = taskSchema
   .pick({
@@ -74,3 +92,4 @@ export type UpdateTaskBodyType = z.infer<typeof UpdateTaskBodySchema>
 export type CreateTaskResType = z.infer<typeof CreateTaskResSchema>
 export type UpdateTaskResType = z.infer<typeof UpdateTaskResSchema>
 export type GetCalendarQueryType = z.infer<typeof GetCalendarQuerySchema>
+export type GetCalendarResType = z.infer<typeof GetCalendarResSchema>

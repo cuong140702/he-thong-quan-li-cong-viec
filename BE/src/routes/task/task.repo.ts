@@ -4,6 +4,7 @@ import {
   CreateTaskBodyType,
   CreateTaskResType,
   GetCalendarQueryType,
+  GetCalendarResType,
   GetTasksQueryType,
   GetTasksResType,
   UpdateTaskBodyType,
@@ -167,29 +168,26 @@ export class TaskRepo {
     return task
   }
 
-  async getTasksInRange({ query, userId }: { query: GetCalendarQueryType; userId: string | undefined }) {
+  async getTasksInRange({
+    query,
+    userId,
+  }: {
+    query: GetCalendarQueryType
+    userId: string | undefined
+  }): Promise<GetCalendarResType> {
+    // ✅ KHÔNG thêm [] ở đây nữa
     const s = query.startDate ? new Date(query.startDate) : undefined
     const e = query.deadline ? new Date(query.deadline) : undefined
 
     const where: Prisma.TaskWhereInput = {
       deletedAt: null,
-      // Task có thời gian tồn tại trong khoảng [s, e]
-      AND: [
-        { startDate: { lte: e } }, // task bắt đầu trước hoặc trong khoảng
-        { deadline: { gte: s } }, // task kết thúc sau hoặc trong khoảng
-      ],
+      AND: [{ startDate: { gte: s } }, { deadline: { lte: e } }],
     }
 
     if (userId) where.userId = userId
+    if (query.projectId) where.projectId = query.projectId
 
-    if (query.projectId) {
-      where.projectId = query.projectId
-    }
-    if (userId) {
-      where.userId = userId
-    }
-
-    return this.prismaService.task.findMany({
+    const tasks = await this.prismaService.task.findMany({
       where,
       select: {
         id: true,
@@ -202,5 +200,7 @@ export class TaskRepo {
         userId: true,
       },
     })
+
+    return { data: tasks }
   }
 }

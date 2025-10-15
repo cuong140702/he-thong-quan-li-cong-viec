@@ -130,14 +130,17 @@ export function formatMessageTime(date: string | Date): string {
  * @param date - The date value (Date or string).
  * @returns Formatted date string or undefined if invalid.
  */
-export function formatDate(date?: Date | string): string | Date {
+export function formatDate(
+  date?: Date | string,
+  pattern: string = "yyyy-MM-dd"
+): string {
   if (!date) return "";
 
   const parsedDate = typeof date === "string" ? new Date(date) : date;
 
   if (isNaN(parsedDate.getTime())) return ""; // tránh Invalid Date
 
-  return format(parsedDate, "yyyy-MM-dd");
+  return format(parsedDate, pattern);
 }
 
 export function toDateSafe(value?: string | Date | null): Date | undefined {

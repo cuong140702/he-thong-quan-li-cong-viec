@@ -193,8 +193,8 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
 
       const res = await taskApiRequest.updateTask(id, {
         ...data,
-        deadline: formatDate(data.deadline) as Date,
-        startDate: formatDate(data.startDate) as Date,
+        deadline: new Date(formatDate(data.deadline) as string),
+        startDate: new Date(formatDate(data.startDate) as string),
       });
       if (!res) return;
 
@@ -217,8 +217,8 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
 
       const res = await taskApiRequest.addTask({
         ...payload,
-        deadline: formatDate(payload.deadline) as Date,
-        startDate: formatDate(payload.startDate) as Date,
+        deadline: new Date(formatDate(payload.deadline) as string),
+        startDate: new Date(formatDate(payload.startDate) as string),
       });
       if (!res) return;
 

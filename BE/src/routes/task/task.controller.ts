@@ -6,6 +6,7 @@ import {
   CreateTaskBodyDTO,
   CreateTaskResDTO,
   GetCalendarQueryDTO,
+  GetCalendarResDTO,
   GetTaskByIdDTO,
   GetTaskParamsDTO,
   GetTasksQueryDTO,
@@ -40,7 +41,7 @@ export class TaskController {
   }
 
   @Get('calendar')
-  // @ZodSerializerDto(GetCalendarQueryDTO)
+  //@ZodSerializerDto(GetCalendarResDTO)
   async getCalendarTasks(@Query() query: GetCalendarQueryDTO, @ActiveUser() user?: AccessTokenPayload) {
     const isAdmin = user?.roleName === RoleName.Admin
     const userId = isAdmin ? query.userId : user?.userId

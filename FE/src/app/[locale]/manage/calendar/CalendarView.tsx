@@ -7,56 +7,55 @@ import { useLocale } from "next-intl";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Loader2 } from "lucide-react";
-import { formatInTimeZone } from "date-fns-tz";
+import { Loader2, Calendar as CalendarIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { DateRange } from "react-day-picker";
+import { Calendar } from "@/components/ui/calendar";
 import taskApiRequest from "@/apiRequests/task";
-import { colorMap } from "@/lib/utils";
+import { colorMap, cn, handleGetDataTimeZone, formatDate } from "@/lib/utils";
 import { TaskStatus } from "@/utils/enum/task";
-import { cn } from "@/lib/utils";
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  start: string;
-  end?: string;
-  backgroundColor?: string;
-}
+import { IGetCalendarRes } from "@/utils/interface/task";
 
 export default function CalendarView() {
   const locale = useLocale();
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const lastRange = useRef<{ start: Date; end: Date } | null>(null);
-  const calendarLocale = useMemo(() => {
-    return locale === "vi" ? viLocale : enLocale;
-  }, [locale]);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: new Date(),
+  });
+
+  const calendarLocale = useMemo(
+    () => (locale === "vi" ? viLocale : enLocale),
+    [locale]
+  );
 
   const fetchEvents = async (start: Date, end: Date) => {
-    if (
-      lastRange.current &&
-      lastRange.current.start.getTime() === start.getTime() &&
-      lastRange.current.end.getTime() === end.getTime()
-    ) {
-      return;
-    }
-    lastRange.current = { start, end };
-
     setLoading(true);
     try {
       const res = await taskApiRequest.getCalendar({
         startDate: start,
         deadline: end,
+        timeZone: handleGetDataTimeZone(),
       });
-      const mapped = (res.data as any).map((t: any) => ({
+
+      const mapped = res?.data?.data?.map((t: IGetCalendarRes) => ({
         id: t.id,
         title: t.title,
         start: t.startDate,
         end: t.deadline,
+        status: t.status,
         backgroundColor: colorMap[t.status as TaskStatus],
       }));
-      setEvents(mapped);
+
+      setEvents(mapped ?? []);
     } catch (err) {
       console.error("❌ Lỗi tải calendar:", err);
     } finally {
@@ -64,23 +63,51 @@ export default function CalendarView() {
     }
   };
 
-  const handleDatesSet = (arg: any) => {
-    console.log("📅 Range đang hiển thị:", arg.start, "→", arg.end);
-    fetchEvents(arg.start, arg.end);
+  const handleApplyRange = () => {
+    if (dateRange?.from && dateRange?.to) {
+      fetchEvents(dateRange.from, dateRange.to);
+    }
   };
 
   return (
     <Card className="p-4 md:p-6 shadow-sm border rounded-2xl">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between  gap-[50px] mb-4">
         <h2 className="text-lg font-semibold tracking-tight">
           📅 Lịch công việc
         </h2>
-        {loading && (
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Đang tải...
-          </div>
-        )}
+
+        <div className="flex items-center gap-2 ">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex">
+                <CalendarIcon className="w-4 h-4" />
+                {dateRange?.from && dateRange?.to ? (
+                  <>
+                    {formatDate(dateRange.from, "dd/MM/yyyy")} →{" "}
+                    {formatDate(dateRange.to, "dd/MM/yyyy")}
+                  </>
+                ) : (
+                  "Chọn khoảng ngày"
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-full max-w-[550px]" align="end">
+              <Calendar
+                mode="range"
+                selected={dateRange}
+                onSelect={setDateRange}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
+
+          <Button
+            onClick={handleApplyRange}
+            disabled={!dateRange?.from || !dateRange?.to || loading}
+          >
+            Áp dụng
+          </Button>
+        </div>
       </div>
 
       {loading && !events.length ? (
@@ -89,50 +116,31 @@ export default function CalendarView() {
           <Skeleton className="h-[400px] w-full" />
         </div>
       ) : (
-        <div className={cn("rounded-md ")}>
+        <div className={cn("rounded-md")}>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             height="auto"
             events={events}
-            datesSet={handleDatesSet}
+            locale={calendarLocale}
             eventClick={(info) => alert(`📝 ${info.event.title}`)}
             eventContent={(arg) => {
-              const { title } = arg.event;
-
-              const start = formatInTimeZone(
-                new Date(arg.event.start || ""),
-                "UTC",
-                "dd/MM/yyyy"
-              );
-              const end = formatInTimeZone(
-                new Date(arg.event.end || ""),
-                "UTC",
-                "dd/MM/yyyy"
-              );
+              const event = arg.event;
+              const start = event.start;
+              const end = event.end;
+              const bg = event.backgroundColor;
 
               return (
                 <div
                   className="text-[11px] text-white p-1.5 rounded-md leading-tight shadow-sm"
-                  style={{
-                    backgroundColor: arg.event.backgroundColor,
-                  }}
+                  style={{ backgroundColor: bg }}
                 >
-                  <div className="font-medium truncate">{title}</div>
-                  {start && (
-                    <div className="opacity-80 text-[10px] mt-0.5">
-                      🕓 {start}
-                      {end && ` → ${end}`}
-                    </div>
-                  )}
+                  <div className="font-medium truncate">{event.title}</div>
+                  🕓 {formatDate(start as Date) as string}
+                  {end && ` → ${formatDate(end)}`}
                 </div>
               );
             }}
-            validRange={() => ({
-              start: "1900-01-01",
-              end: "2100-12-31",
-            })}
-            locale={calendarLocale}
           />
         </div>
       )}
