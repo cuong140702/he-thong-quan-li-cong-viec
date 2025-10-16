@@ -132,7 +132,7 @@ export function formatMessageTime(date: string | Date): string {
  */
 export function formatDate(
   date?: Date | string,
-  pattern: string = "yyyy-MM-dd"
+  pattern: string = "dd/MM/yyyy"
 ): string {
   if (!date) return "";
 

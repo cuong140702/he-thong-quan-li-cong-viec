@@ -136,8 +136,8 @@ export default function CalendarView() {
                   style={{ backgroundColor: bg }}
                 >
                   <div className="font-medium truncate">{event.title}</div>
-                  🕓 {formatDate(start as Date) as string}
-                  {end && ` → ${formatDate(end)}`}
+                  🕓 {formatDate(start as Date, "dd/MM/yyyy") as string}
+                  {end && ` → ${formatDate(end, "dd/MM/yyyy")}`}
                 </div>
               );
             }}
