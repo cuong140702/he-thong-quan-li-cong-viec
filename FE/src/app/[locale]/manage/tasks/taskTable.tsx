@@ -14,6 +14,7 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { useState, createContext, useContext, useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { LoadingData } from "@/components/LoadingData";
 import AutoPagination from "@/components/auto-pagination";
@@ -34,8 +35,8 @@ import { ITaskRes } from "@/utils/interface/task";
 import taskApiRequest from "@/apiRequests/task";
 import FormTask from "./formTask";
 import TableAction from "@/components/TableAction";
-import { formatDate, ShowIfCan } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { colorMap, formatDate, ShowIfCan, statusMap } from "@/lib/utils";
+import { TaskStatus } from "@/utils/enum/task";
 
 export const TableContext = createContext({
   setTableIdEdit: (_: string) => {},
@@ -73,9 +74,10 @@ export const getColumns = (
   {
     accessorKey: "status",
     header: t("status"),
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    cell: ({ row }) => {
+      const status = row.getValue("status") as TaskStatus;
+      return <div style={{ color: colorMap[status] }}>{statusMap[status]}</div>;
+    },
   },
   {
     accessorKey: "deadline",

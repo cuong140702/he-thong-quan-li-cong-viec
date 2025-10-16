@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import viLocale from "@fullcalendar/core/locales/vi";
 import enLocale from "@fullcalendar/core/locales/en-gb";
 import { useLocale } from "next-intl";
@@ -21,24 +21,52 @@ import { Calendar } from "@/components/ui/calendar";
 import taskApiRequest from "@/apiRequests/task";
 import { colorMap, cn, handleGetDataTimeZone, formatDate } from "@/lib/utils";
 import { TaskStatus } from "@/utils/enum/task";
-import { IGetCalendarRes } from "@/utils/interface/task";
+import { IGetCalendarDetail, IGetCalendarRes } from "@/utils/interface/task";
+import CalendarDetail from "./CalendarDetail";
+import { LoadingData } from "@/components/LoadingData";
+import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 export default function CalendarView() {
   const locale = useLocale();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const loadingContext = useContext(LoadingData);
+  const fromParam = useMemo(() => searchParams.get("from"), [searchParams]);
+  const toParam = useMemo(() => searchParams.get("to"), [searchParams]);
   const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: new Date(),
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
+    if (fromParam && toParam) {
+      return {
+        from: new Date(fromParam),
+        to: new Date(toParam),
+      };
+    }
+    return {
+      from: new Date(),
+      to: new Date(),
+    };
   });
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [dataCalendarDetail, setDataCalendarDetail] =
+    useState<IGetCalendarDetail | null>(null);
 
   const calendarLocale = useMemo(
     () => (locale === "vi" ? viLocale : enLocale),
     [locale]
   );
 
+  useEffect(() => {
+    if (fromParam && toParam) {
+      const from = new Date(fromParam);
+      const to = new Date(toParam);
+      fetchEvents(from, to);
+    }
+  }, [fromParam, toParam]);
+
   const fetchEvents = async (start: Date, end: Date) => {
-    setLoading(true);
+    loadingContext?.show();
     try {
       const res = await taskApiRequest.getCalendar({
         startDate: start,
@@ -59,13 +87,41 @@ export default function CalendarView() {
     } catch (err) {
       console.error("❌ Lỗi tải calendar:", err);
     } finally {
-      setLoading(false);
+      loadingContext?.hide();
     }
   };
 
   const handleApplyRange = () => {
     if (dateRange?.from && dateRange?.to) {
+      // Cập nhật query string
+      const params = new URLSearchParams();
+      params.set("from", dateRange.from.toISOString());
+      params.set("to", dateRange.to.toISOString());
+
+      router.push(`?${params.toString()}`);
+
+      // Fetch lại dữ liệu
       fetchEvents(dateRange.from, dateRange.to);
+    }
+  };
+
+  const handleDetailTask = async (id: string) => {
+    if (!id) return;
+
+    try {
+      loadingContext?.show();
+
+      const res = await taskApiRequest.getCalendarDatail(id);
+      if (!res) return;
+
+      const responseData = res?.data;
+      if (!responseData) return;
+
+      setDataCalendarDetail(responseData);
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách!");
+    } finally {
+      loadingContext?.hide();
     }
   };
 
@@ -103,47 +159,50 @@ export default function CalendarView() {
 
           <Button
             onClick={handleApplyRange}
-            disabled={!dateRange?.from || !dateRange?.to || loading}
+            disabled={!dateRange?.from || !dateRange?.to}
           >
             Áp dụng
           </Button>
         </div>
       </div>
 
-      {loading && !events.length ? (
-        <div className="space-y-3">
-          <Skeleton className="h-8 w-1/3" />
-          <Skeleton className="h-[400px] w-full" />
-        </div>
-      ) : (
-        <div className={cn("rounded-md")}>
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            height="auto"
-            events={events}
-            locale={calendarLocale}
-            eventClick={(info) => alert(`📝 ${info.event.title}`)}
-            eventContent={(arg) => {
-              const event = arg.event;
-              const start = event.start;
-              const end = event.end;
-              const bg = event.backgroundColor;
+      <div className={cn("rounded-md")}>
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          height="auto"
+          events={events}
+          locale={calendarLocale}
+          eventClick={(info) => {
+            const id = info.event.id;
+            setIsOpen(true);
+            handleDetailTask(id);
+          }}
+          eventContent={(arg) => {
+            const event = arg.event;
+            const start = event.start;
+            const end = event.end;
+            const bg = event.backgroundColor;
 
-              return (
-                <div
-                  className="text-[11px] text-white p-1.5 rounded-md leading-tight shadow-sm"
-                  style={{ backgroundColor: bg }}
-                >
-                  <div className="font-medium truncate">{event.title}</div>
-                  🕓 {formatDate(start as Date, "dd/MM/yyyy") as string}
-                  {end && ` → ${formatDate(end, "dd/MM/yyyy")}`}
-                </div>
-              );
-            }}
-          />
-        </div>
-      )}
+            return (
+              <div
+                className="text-[11px] text-white p-1.5 rounded-md leading-tight shadow-sm"
+                style={{ backgroundColor: bg }}
+              >
+                <div className="font-medium truncate">{event.title}</div>
+                🕓 {formatDate(start as Date, "dd/MM/yyyy") as string}
+                {end && ` → ${formatDate(end, "dd/MM/yyyy")}`}
+              </div>
+            );
+          }}
+        />
+      </div>
+
+      <CalendarDetail
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        dataCalendarDetail={dataCalendarDetail}
+      />
     </Card>
   );
 }

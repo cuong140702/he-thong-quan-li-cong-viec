@@ -6,7 +6,6 @@ import {
   SetStateAction,
   useState,
 } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoadingData } from "@/components/LoadingData";
@@ -74,7 +73,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
     defaultValues: {
       title: "",
       description: null,
-      status: TaskStatus.in_progress, // giá trị mặc định
+      status: TaskStatus.IN_PROGRESS, // giá trị mặc định
       startDate: undefined,
       deadline: undefined,
       projectId: null,
@@ -96,7 +95,7 @@ const FormTask = ({ id, setId, isOpen, onClose }: Props) => {
       form.reset({
         title: "",
         description: null,
-        status: TaskStatus.in_progress, // giá trị mặc định
+        status: TaskStatus.IN_PROGRESS, // giá trị mặc định
         deadline: undefined,
         projectId: null,
         tags: [],

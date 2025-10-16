@@ -2,6 +2,7 @@ import { http } from "@/utils/api";
 import { IListDataResponse, IQueryBase } from "@/utils/interface/common";
 import {
   IBodyTask,
+  IGetCalendarDetail,
   IGetCalendarRes,
   IQueryCalendar,
   ITaskRes,
@@ -25,6 +26,7 @@ const taskApiRequest = {
     http.get<IBackendRes<IGetCalendarRes[]>>("task/calendar", {
       queryParams: payload,
     }),
+  getCalendarDatail: (id: string) => http.get<IGetCalendarDetail>(`task/${id}`),
 };
 
 export default taskApiRequest;

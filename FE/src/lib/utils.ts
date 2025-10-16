@@ -242,11 +242,17 @@ export const formatDateTime = (date: Date | string) => {
 };
 
 export const colorMap: Record<TaskStatus, string> = {
-  in_progress: "#3b82f6",
-  completed: "#10b981",
-  break: "#f59e0b",
+  [TaskStatus.BREAK]: "#3b82f6",
+  [TaskStatus.COMPLETED]: "#10b981",
+  [TaskStatus.IN_PROGRESS]: "#f59e0b",
 };
 
 export const handleGetDataTimeZone = (): string => {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
+};
+
+export const statusMap: Record<TaskStatus, string> = {
+  [TaskStatus.BREAK]: "BREAK",
+  [TaskStatus.COMPLETED]: "COMPLETED",
+  [TaskStatus.IN_PROGRESS]: "IN PROGRESS",
 };

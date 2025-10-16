@@ -162,7 +162,7 @@ export class TaskRepo {
   async getTaskById(id: string) {
     const task = await this.prismaService.task.findUnique({
       where: { id },
-      include: { tags: true },
+      include: { tags: true, user: true },
     })
     if (!task) return null
     return task

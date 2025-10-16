@@ -1,5 +1,6 @@
 import { TagSchema } from 'src/shared/models/shared-tag.model'
 import { taskSchema } from 'src/shared/models/shared-task.model'
+import { UserSchema } from 'src/shared/models/shared-user.model'
 import z from 'zod'
 
 // Response từ API
@@ -82,6 +83,7 @@ export const UpdateTaskResSchema = CreateTaskBodySchema
 
 export const GetTaskByIdSchema = taskSchema.extend({
   tags: z.array(TagSchema).optional(),
+  user: UserSchema.pick({ id: true, fullName: true }).optional(),
 })
 
 // Types
