@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import {
   Home,
@@ -12,19 +12,29 @@ import {
   ShieldCheck,
   AlarmClock,
   History,
-  icons,
   Calendar,
 } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAppContext } from "./app-context";
 import { cn } from "@/lib/utils";
 import { useHasMounted } from "./customHook";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Sidebar = () => {
-  const { isSidebarOpen } = useAppContext();
+  const { isSidebarOpen, toggleSidebar } = useAppContext();
+
   const pathname = usePathname();
   const hasMounted = useHasMounted();
   const t = useTranslations("Menu");
+
+  useEffect(() => {
+    toggleSidebar();
+  }, []);
 
   if (!hasMounted) return null;
 
@@ -84,38 +94,75 @@ const Sidebar = () => {
   return (
     <aside
       className={cn(
-        "h-full w-60 shrink-0 bg-muted/40 text-foreground border-r border-border transition-all duration-300",
-        {
-          "hidden lg:block": !isSidebarOpen,
-          block: isSidebarOpen,
-        }
+        "h-full shrink-0 bg-muted/40 text-foreground border-r border-border transition-all duration-300 w-16",
+        isSidebarOpen && "w-60",
+        "sm:w-60"
       )}
     >
-      <div className="p-4 border-b border-border">
-        <h1 className="text-lg font-bold">Task Tracker</h1>
+      {/* Header */}
+      <div className="p-4 border-b border-border flex justify-center md:justify-start">
+        {/* Mobile: chỉ icon */}
+        <span
+          className={cn(
+            "text-xl font-bold md:hidden",
+            isSidebarOpen && "hidden"
+          )}
+        >
+          📋
+        </span>
+        {/* Desktop: hiện text */}
+        <h1
+          className={cn(
+            "hidden md:block text-lg font-bold",
+            isSidebarOpen && "block"
+          )}
+        >
+          Task Tracker
+        </h1>
       </div>
 
-      <nav className="px-4 py-6 space-y-2">
-        {navItems.map((Item, index) => {
-          const isActive = pathname === Item.href;
-          return (
-            <Link
-              key={index}
-              href={Item.href}
-              className={cn(
-                "flex items-center gap-3 py-2 px-3 rounded-lg text-muted-foreground transition-colors",
-                "hover:bg-accent hover:text-accent-foreground",
-                isActive && "bg-accent text-accent-foreground font-medium"
-              )}
-              onClick={(e) => {
-                if (pathname === Item.href) e.preventDefault();
-              }}
-            >
-              <Item.icon className="w-5 h-5" />
-              <span className="text-sm font-medium">{Item.label}</span>
-            </Link>
-          );
-        })}
+      {/* Nav */}
+      <nav className="px-2 py-4 space-y-2">
+        <TooltipProvider delayDuration={100}>
+          {navItems.map((Item, index) => {
+            const isActive = pathname === Item.href;
+
+            return (
+              <Tooltip key={index}>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={Item.href}
+                    className={cn(
+                      "flex items-center gap-3 py-2 px-3 rounded-lg transition-colors group",
+                      "hover:bg-accent hover:text-accent-foreground text-muted-foreground",
+                      isActive && "bg-accent text-accent-foreground font-medium"
+                    )}
+                    onClick={(e) => {
+                      if (pathname === Item.href) e.preventDefault();
+                    }}
+                  >
+                    <Item.icon className="w-5 h-5 shrink-0" />
+                    <span
+                      className={cn(
+                        "text-sm font-medium transition-all duration-300 overflow-hidden whitespace-nowrap",
+                        isSidebarOpen ? "opacity-100" : "opacity-0 w-0",
+                        "md:opacity-100 md:w-auto"
+                      )}
+                    >
+                      {Item.label}
+                    </span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="text-sm font-medium md:hidden"
+                >
+                  {Item.label}
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </TooltipProvider>
       </nav>
     </aside>
   );
